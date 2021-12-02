@@ -10,5 +10,11 @@ void main(List<String> arguments) {
 
   var partOne = PartOne(linesString);
   partOne.calculate();
-  print(partOne.solution);
+  var solutionPartOne = partOne.solution;
+  print('Solution of Part 1: $solutionPartOne\n -----------------------------');
+
+  var partTwo = PartTwo(linesString);
+  partTwo.calculate();
+  var solutionPartTwo = partTwo.solution;
+  print('Solution of Part 2: $solutionPartTwo\n -----------------------------');
 }

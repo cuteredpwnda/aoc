@@ -137,7 +137,18 @@ class PartTwo {
 
   // Method.
   void calculate() {
-    var oldWindow;
-    var newWindow;
+    // windowsize is 3
+    // the new window is always offset by one
+    var counterLarger = 0;
+    for (var w = 0; w <= inputList.length - 4; w++) {
+      var firstWindowSum = inputList.sublist(w, w + 3).fold(0, (i, j) => i + j);
+      var secondWindowSum =
+          inputList.sublist(w + 1, w + 4).fold(0, (i, j) => i + j);
+      var deltaWindows = secondWindowSum - firstWindowSum;
+      if (deltaWindows > 0) {
+        counterLarger += 1;
+      }
+    }
+    solution = counterLarger;
   }
 }
