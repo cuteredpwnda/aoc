@@ -13,7 +13,7 @@ void main(List<String> arguments) {
   print('Solution of Part 1: $solutionPartOne\n -----------------------------');
 
   var partTwo = PartTwo(linesString);
-  partOne.calculate();
+  partTwo.calculate();
   var solutionPartTwo = partTwo.solution;
   print('Solution of Part 2: $solutionPartTwo\n -----------------------------');
 }

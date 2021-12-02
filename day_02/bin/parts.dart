@@ -126,6 +126,7 @@ class PartTwo {
     // Initialize variables
     positionX = 0;
     positionY = 0;
+    aim = 0;
     steeringInputs = [];
 
     // read lines into list
@@ -146,12 +147,13 @@ class PartTwo {
       switch (direction) {
         case 'forward':
           positionX += amount;
+          positionY += amount * aim;
           break;
         case 'down':
-          positionY += amount;
+          aim += amount;
           break;
         case 'up':
-          positionY -= amount;
+          aim -= amount;
           break;
       }
     }
