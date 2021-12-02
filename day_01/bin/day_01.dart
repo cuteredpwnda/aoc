@@ -52,16 +52,20 @@ import 'dart:io';
 
 void main(List<String> arguments) {
   // variables
-  var depthMeasurements = [];
-
+  List<int> depthMeasurements = [];
+  var counterLarger = 0;
   // read lines into list
-  List<String> lines = File('raw_input.txt').readAsLinesSync();
-  for (var line in lines) {
-    depthMeasurements.add(line);
+  List<String> linesString = File('./input/raw_input.txt').readAsLinesSync();
+  for (var line in linesString) {
+    depthMeasurements.add(int.parse(line));
   }
-  stdout.writeAll(depthMeasurements);
-
-  for (var m = 1; m <= depthMeasurements.length; m++) {
+  // count the lines
+  for (var m = 1; m < depthMeasurements.length; m++) {
     var deltaMeasurement = depthMeasurements[m] - depthMeasurements[m - 1];
+    if (deltaMeasurement > 0) {
+      counterLarger += 1;
+    }
   }
+  // output the lines
+  stdout.writeln(counterLarger);
 }
