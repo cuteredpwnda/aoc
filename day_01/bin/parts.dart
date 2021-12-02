@@ -52,31 +52,30 @@ class PartOne {
   // get the input data with: `curl "https://adventofcode.com/2021/day/1/input" --cookie "session=***" -o raw_input.txt`
 
   dynamic solution;
-  dynamic input;
+  dynamic inputList;
 
   // Constructor, with syntactic sugar for assignment to members.
-  PartOne() {
+  PartOne(this.inputList) {
     // Initialize with the input
     List<int> depthMeasurements = [];
     // read lines into list
-    List<String> linesString = File('./input/raw_input.txt').readAsLinesSync();
-    for (var line in linesString) {
+    for (var line in inputList) {
       depthMeasurements.add(int.parse(line));
     }
-    input = depthMeasurements;
+    inputList = depthMeasurements;
   }
 
   // Named constructor that forwards to the default one.
-  PartOne.calculate() : this();
+  PartOne.calculate(inputList) : this(inputList);
 
   // Method.
   void calculate() {
     // variables
-    var counterLarger = 0;    
+    var counterLarger = 0;
 
     // count the lines
-    for (var m = 1; m < input.length; m++) {
-      var deltaMeasurement = input[m] - input[m - 1];
+    for (var m = 1; m < inputList.length; m++) {
+      var deltaMeasurement = inputList[m] - inputList[m - 1];
       if (deltaMeasurement > 0) {
         counterLarger += 1;
       }
@@ -126,21 +125,19 @@ class PartTwo {
   */
 
   dynamic solution;
-  dynamic input;
+  dynamic inputList;
   // Constructor, with syntactic sugar for assignment to members.
-  PartTwo() {
+  PartTwo(this.inputList) {
     // Initialization code goes here.
-    input = PartOne().input;
+    inputList = PartOne(inputList).inputList;
   }
 
   // Named constructor that forwards to the default one.
-  PartTwo.calculate() : this();
+  PartTwo.calculate(inputList) : this(inputList);
 
   // Method.
   void calculate() {
-    var oldWindow = 
-    var newWindow = 
-
-    
+    var oldWindow;
+    var newWindow;
   }
 }
