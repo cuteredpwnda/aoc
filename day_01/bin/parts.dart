@@ -52,9 +52,18 @@ class PartOne {
   // get the input data with: `curl "https://adventofcode.com/2021/day/1/input" --cookie "session=***" -o raw_input.txt`
 
   dynamic solution;
+  dynamic input;
+
   // Constructor, with syntactic sugar for assignment to members.
   PartOne() {
-    // Initialization code goes here.
+    // Initialize with the input
+    List<int> depthMeasurements = [];
+    // read lines into list
+    List<String> linesString = File('./input/raw_input.txt').readAsLinesSync();
+    for (var line in linesString) {
+      depthMeasurements.add(int.parse(line));
+    }
+    input = depthMeasurements;
   }
 
   // Named constructor that forwards to the default one.
@@ -63,16 +72,11 @@ class PartOne {
   // Method.
   void calculate() {
     // variables
-    List<int> depthMeasurements = [];
-    var counterLarger = 0;
-    // read lines into list
-    List<String> linesString = File('./input/raw_input.txt').readAsLinesSync();
-    for (var line in linesString) {
-      depthMeasurements.add(int.parse(line));
-    }
+    var counterLarger = 0;    
+
     // count the lines
-    for (var m = 1; m < depthMeasurements.length; m++) {
-      var deltaMeasurement = depthMeasurements[m] - depthMeasurements[m - 1];
+    for (var m = 1; m < input.length; m++) {
+      var deltaMeasurement = input[m] - input[m - 1];
       if (deltaMeasurement > 0) {
         counterLarger += 1;
       }
@@ -83,15 +87,60 @@ class PartOne {
 }
 
 class PartTwo {
+  /*
+    --- Part Two ---
+
+  Considering every single measurement isn't as useful as you expected: there's just too much noise in the data.
+
+  Instead, consider sums of a three-measurement sliding window. Again considering the above example:
+
+  199  A      
+  200  A B    
+  208  A B C  
+  210    B C D
+  200  E   C D
+  207  E F   D
+  240  E F G  
+  269    F G H
+  260      G H
+  263        H
+
+  Start by comparing the first and second three-measurement windows. The measurements in the first window are marked A (199, 200, 208); their sum is 199 + 200 + 208 = 607. The second window is marked B (200, 208, 210); its sum is 618. The sum of measurements in the second window is larger than the sum of the first, so this first comparison increased.
+
+  Your goal now is to count the number of times the sum of measurements in this sliding window increases from the previous sum. So, compare A with B, then compare B with C, then C with D, and so on. Stop when there aren't enough measurements left to create a new three-measurement sum.
+
+  In the above example, the sum of each three-measurement window is as follows:
+
+  A: 607 (N/A - no previous sum)
+  B: 618 (increased)
+  C: 618 (no change)
+  D: 617 (decreased)
+  E: 647 (increased)
+  F: 716 (increased)
+  G: 769 (increased)
+  H: 792 (increased)
+
+  In this example, there are 5 sums that are larger than the previous sum.
+
+  Consider sums of a three-measurement sliding window. How many sums are larger than the previous sum?
+  */
+
   dynamic solution;
+  dynamic input;
   // Constructor, with syntactic sugar for assignment to members.
   PartTwo() {
     // Initialization code goes here.
+    input = PartOne().input;
   }
 
   // Named constructor that forwards to the default one.
   PartTwo.calculate() : this();
 
   // Method.
-  void calculate() {}
+  void calculate() {
+    var oldWindow = 
+    var newWindow = 
+
+    
+  }
 }
