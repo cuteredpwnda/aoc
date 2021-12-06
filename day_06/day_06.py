@@ -5,13 +5,15 @@ import time
 # initial value of internal timer at creation is 2 
 class lanternfish:
     name = 'Lampenbert'
+    id = 1
     internal_timer = 2
     age = 0
     double_time = 7
     fish_tuple = (name, internal_timer, age)
 
     def __init__(self, fish_id, internal_timer=2, age=0):
-        self.name = 'Lampenbert #{}'.format(fish_id)
+        self.name += str(fish_id)
+        self.id += 1
         self.internal_timer = internal_timer
         self.age = age
         self.fish_tuple = (self.name, self.internal_timer, self.age)
@@ -20,7 +22,7 @@ class lanternfish:
         if (self.internal_timer == 0):
             self.age += 1
             self.internal_timer = 6
-            return lanternfish('_spawn_@day_'.format(self.age), 9, 0)
+            return lanternfish('#{}_spawn_@day_{}'.format(self.id,self.age), 9, 0)
         else:
             self.internal_timer -=1
             self.age += 1
@@ -50,7 +52,7 @@ def test():
         print('After {} days: {}'.format(i, fish_timers))
     
 
-def main():
+def part1():
     # read initial state
     with open('input/raw_input.txt') as f:
         data = f.readline().split(',')
@@ -73,11 +75,11 @@ def main():
             if new_fish:
                 fish_array.append(new_fish)
     print('After {} days there are {} lanternfish'.format(duration, len(fish_array)))
-    
+    print('Last fish was: {}'.format(fish_array[-1].name))
 
 if __name__ == '__main__':
     #test()
     start_time = time.perf_counter()
-    main()
+    part1()
     finish_time = time.perf_counter()
     print(f"Calculated part 1 in {finish_time - start_time:0.4f} seconds")
