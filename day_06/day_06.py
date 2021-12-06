@@ -88,9 +88,9 @@ def calculate_part2(data, duration):
 
 
 if __name__ == '__main__':
-    '''
+    
     start_time = time.perf_counter()
-    test(200)
+    test(80)
     finish_time = time.perf_counter()
     print(f"Calculated test in {finish_time - start_time:0.4f} seconds")
     
@@ -98,12 +98,11 @@ if __name__ == '__main__':
     calculate(80)
     finish_time = time.perf_counter()
     print(f"Calculated part 1 in {finish_time - start_time:0.4f} seconds")
-    '''
-
+    
     with open('input/raw_input.txt') as f:
         data = f.readline().split(',')
     data = [int(x) for x in data]
-    
+
     start_time = time.perf_counter()    
     test_data = [3,4,3,1,2]
     res = test_part2(test_data, 80)   
