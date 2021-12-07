@@ -34,7 +34,7 @@ def calculate_part2(data):
     timer = (finish_time-start_time)*10**(6)
     return sum(fuel), timer
 
-# credits https://www.reddit.com/r/adventofcode/comments/rar7ty/comment/hnk6gz0/?utm_source=share&utm_medium=web2x&context=3
+# credits https://www.reddit.com/r/adventofcode/comments/rar7ty/comment/hnk6gz0/
 def optimal_solution(): 
     x = np.fromfile(open('input/raw_input.txt'), int, sep=',')
     start_time = time.perf_counter()
