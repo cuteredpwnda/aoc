@@ -57,11 +57,8 @@ def part1(input_list):
 
 def test():
     input= [(set(['acedgfb','cdfbe','gcdfa','fbcad','dab','cefabd','cdfgeb','eafb','cagedb','ab']), ['cdfeb', 'fcadb', 'cdfeb', 'cdbaf'])]
-    print(type(input[0]))
-    print(part2(input))
-
+    print('sum of all elements in test: {}'.format(part2(input)))
 def part2(input_list):
-    print(input_list)
     output_list = []
     display = seven_segment_display()
     for (input, output) in input_list:
@@ -69,11 +66,12 @@ def part2(input_list):
             # mapping
             input_map = {new:display.segments[i] for i, new in enumerate(cfg)}
             for digit in input:
-                found_bool = True
                 out = set(map(lambda x: input_map[x], digit))
+                # surely found something
+                found_bool = True
                 # check if in displays number dict
                 if not any(out==a for a in display.numberdict.values()):
-                    found_bool = False
+                    found_bool = False                    
                     break
             if found_bool:
                 break
@@ -92,7 +90,7 @@ def part2(input_list):
 if __name__ == '__main__':    
     input_list = read_input()
     #part1(input_list)
-    #test()
+    test()
     print('sum of all elements in part2: {}'.format(part2(input_list)))
 
     
