@@ -11,7 +11,7 @@ def read_input(file = 'input/raw_input.txt'):
     m = np.array(output_matrix)
 
     # brace the input
-    out = np.pad(m, pad_width=1, mode='maximum')
+    
     return out
 
 def part1(b):
@@ -42,12 +42,7 @@ def test():
     m = np.array(input)
 
     # brace the input
-    new_column = np.ones((len(m), 1), dtype=int)*np.inf
-    out = np.block([m, new_column])
-    out = np.block([new_column, out])
-    new_row = np.ones((1, len(m[0])+2), dtype=int)*np.inf
-    out = np.vstack([out, new_row])
-    out = np.vstack([new_row, out])
+    out = np.pad(m, pad_width=1, mode='maximum')
 
     print('Result for part 1: ',part1(out))
     print('Result for part 2: ',part2(out))
