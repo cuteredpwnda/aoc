@@ -12,11 +12,9 @@ def read_input(file = 'input/raw_input.txt'):
 
     # brace the input
     new_column = np.ones((len(m), 1), dtype=int)*np.inf
-    out = np.block([m, new_column])
-    out = np.block([new_column, out])
-    new_row = np.ones((1, len(m[0])+2), dtype=int)*np.inf
-    out = np.vstack([out, new_row])
-    out = np.vstack([new_row, out])
+    out = np.block([new_column, m, new_column])
+    new_row = np.ones((1, len(out[0])), dtype=int)*np.inf
+    out = np.vstack([new_row, out, new_row])
     return out
 
 def part1(b):
