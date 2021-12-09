@@ -58,13 +58,7 @@ def test():
     print('Result for part 2: ',part2(out))
 
 def part2(b):
-    _, basin_endpoints = part1(b)
-    basins = []
-
-    for endpoint in basin_endpoints:
-        basins.append(bfs(endpoint[0], endpoint[1], b))
-
-    return np.prod(sorted([len(x) for x in basins])[-3:])    
+    return np.prod(sorted([len(x) for x in [bfs(x[0], x[1], b) for x in part1(b)[1]]])[-3:])    
     
 
 def bfs(x:int,y:int, input_matrix:np.ndarray):
