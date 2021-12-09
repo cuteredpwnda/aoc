@@ -1,18 +1,7 @@
 import numpy as np
 
 def read_input(file = 'input/raw_input.txt'):
-    with open(file) as f:
-            data = f.readlines()
-    input_matrix = [line.strip('\n')  for line in data]
-    output_matrix = []
-    for line in input_matrix:
-        out_line = [int(c) for c in line] 
-        output_matrix.append(out_line)
-    m = np.array(output_matrix)
-
-    # brace the input
-    
-    return out
+    return np.pad(np.genfromtxt(file, delimiter = 1), pad_width=1, mode='maximum')
 
 def part1(b):
     # start at (1,1)
@@ -34,15 +23,12 @@ def part1(b):
     return sum(risk_level), position_list
 
 def test():
-    input= np.array([[2,1,9,9,9,4,3,2,1,0],
-                    [3,9,8,7,8,9,4,9,2,1],
-                    [9,8,5,6,7,8,9,8,9,2],
-                    [8,7,6,7,8,9,6,7,8,9],
-                    [9,8,9,9,9,6,5,6,7,8]])
-    m = np.array(input)
-
-    # brace the input
-    out = np.pad(m, pad_width=1, mode='maximum')
+    out = np.pad(np.array([[2,1,9,9,9,4,3,2,1,0],
+                            [3,9,8,7,8,9,4,9,2,1],
+                            [9,8,5,6,7,8,9,8,9,2],
+                            [8,7,6,7,8,9,6,7,8,9],
+                            [9,8,9,9,9,6,5,6,7,8]]),
+                pad_width=1, mode='maximum')
 
     print('Result for part 1: ',part1(out))
     print('Result for part 2: ',part2(out))
