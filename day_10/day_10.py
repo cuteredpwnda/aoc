@@ -63,23 +63,6 @@ def part2(expr_ls):
             rev_score = [SCORE_DICT_PT2[x] for x in rev]
             winner_list.append(multiple(rev_score))
     return sorted(winner_list)[len(winner_list)//2]
-    
-
-def bfs(x:int,y:int, input_matrix:np.ndarray):
-    start = [(x, y)]
-    queue = start
-    visited = set()
-    while(queue):
-        (curr_x, curr_y) = start.pop(0)
-        if ((curr_x, curr_y) in visited or input_matrix[curr_x][curr_y] >= 9):
-            continue
-        visited.add((curr_x, curr_y))
-        # add elements in order up, down, left, right
-        queue.append((curr_x, curr_y-1))
-        queue.append((curr_x, curr_y+1))
-        queue.append((curr_x-1, curr_y))
-        queue.append((curr_x+1, curr_y))
-    return visited
 
 if __name__ == '__main__':
     input_matrix = read_input()
