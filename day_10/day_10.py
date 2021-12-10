@@ -1,5 +1,4 @@
 import numpy as np
-from operator import mul
 
 SCORE_DICT = {  ')' : 3, 
                 ']' : 57,
