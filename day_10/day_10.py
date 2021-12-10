@@ -50,11 +50,11 @@ def test():
     print('Result for part 2: ', part2(expr_list))
 
 def multiple(lst, curr = 0):
-                if lst:
-                    curr = curr*5+lst.pop(0)
-                    return multiple(lst, curr)
-                else: 
-                    return curr
+    if lst:
+        curr = curr*5+lst.pop(0)
+        return multiple(lst, curr)
+    else: 
+        return curr
 
 def part2(expr_ls):
     winner_list = []
