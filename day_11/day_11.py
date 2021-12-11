@@ -1,7 +1,6 @@
 import numpy as np
 
 def read_input(file = 'input/raw_input.txt'):
-    #return np.genfromtxt(file, delimiter = 1)
     return np.pad(np.genfromtxt(file, delimiter = 1), pad_width=1, mode='constant', constant_values = np.nan)
 
 def part1(b):    
@@ -16,15 +15,7 @@ def part1(b):
 def getAdj(pt):
     y = pt[0]
     x = pt[1]
-    t = (y-1, x)
-    tr = (y-1, x+1)
-    r = (y, x+1)
-    br = (y+1, x+1)
-    b = (y+1, x)
-    bl = (y+1, x-1)
-    l = (y, x-1)
-    tl = (y-1, x-1)
-    return [t, tr, r, br, b, bl, l, tl]
+    return [(y-1, x), (y-1, x+1), (y, x+1), (y+1, x+1), (y+1, x), (y+1, x-1), (y, x-1), (y-1, x-1)]
 
 def step(b, flash_counter, all_flashed = False):
     b += 1
@@ -68,7 +59,7 @@ def part2(b):
 if __name__ == '__main__':
     input_matrix = read_input()
     #test()
-    #m, res = part1(input_matrix)
-    #print('Result for part 1: ', res, 'Matrix: \n', m)
+    m, res = part1(input_matrix)
+    print('Result for part 1: ', res, 'Matrix: \n', m)
     m2, res2 = part2(input_matrix)
     print('Result for part 2: ', res2, 'Matrix: \n', m2)
