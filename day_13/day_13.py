@@ -43,13 +43,10 @@ def part1(b, stop_at_one=True):
 
 def part2(b):
     m, res = part1(b, stop_at_one=False)
-    f = open("output.txt", "w")
     m[m =='#'] =  u"\u2588"
     for line in range(0, len(m)):
         lstr = ''.join(m[line, :])
         print(lstr)
-        f.writelines(lstr+'\n')
-    f.close()
     return m, res 
 
 def test():
