@@ -43,7 +43,7 @@ def dijkstra(graph, initial, end_node, matrix):
     visited = set()
 
     while queue:
-        node, d = queue.popitem()
+        node, _ = queue.popitem()
         y_node, x_node = node
         visited.add(node)
         neigbors = []
