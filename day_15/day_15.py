@@ -21,10 +21,10 @@ def part1(data):
     x_list = list(zip(np.where(data<=9)[0],np.where(data<=9)[1]))
     adj_graph = {pt:getAdj(pt,data) for pt in x_list}
     #print(adj_graph)
-    path = dijkstra(adj_graph, (1,1), ((len(data)-2), len(data[0])-2))[::-1]
+    path = dijkstra(adj_graph, (1,1), ((len(data)-2), len(data[0])-2))[::-1] # inverted
     print(path)
     cost=0
-    for node in path[1:]:
+    for node in path[1:]: # without the cost of the first node
         y = node[0]
         x = node[1]
         cost += data[y,x]
@@ -62,12 +62,11 @@ def dijkstra(graph, initial, end_node):
             if path[i] > alternate:
                 path[i] = alternate
                 adj_node[i] = cur
-                
+
     x = end_node
     while True:
         x = adj_node[x]
         if x is None:
-            print("")
             break
         shortest_path.append(x)
     return shortest_path
