@@ -79,68 +79,69 @@ def literal_value(bin:str) -> tuple[int,int]:
     return int(value, 2), l
 
 def decode_transmission_block(data_bin:str, packet_version_list:list = []):
-    print('\nData (bin):', data_bin)
-    # TODO recurse the packed packages    
-    # encode header
-    version = data_bin[:3]
-    version_dec = int(version,2)
-    type_id = data_bin[3:6]
-    type_id_dec = int(type_id,2)
+    if len(data_bin)>10:
+        print('\nData (bin):', data_bin)
+        # TODO recurse the packed packages    
+        # encode header
+        version = data_bin[:3]
+        version_dec = int(version,2)
+        type_id = data_bin[3:6]
+        type_id_dec = int(type_id,2)
 
-    packet_version_list.append(version_dec)        
-    print('Packet version list:', packet_version_list)
+        packet_version_list.append(version_dec)        
+        print('Packet version list:', packet_version_list)
+        print('Current sum of packet version list:', sum(packet_version_list))
 
-    print('Version (bin, dec):', version, version_dec)
-    if (type_id_dec == 4):
-        # literal value -> one single binary number, is always the last package, returns the packet_version_list
-        print('TypeID (bin, dec):', type_id, type_id_dec, 'is a literal')
-        value_dec, l = literal_value(data_bin)
-        print('Literal decimal value:', value_dec)
-        last_index = l+1
-        print('Last index of literal:',last_index)
-        return packet_version_list, last_index
-        
-    else:
-        # operator
-        print('TypeID (bin, dec):', type_id, type_id_dec, 'is an operator')
-        length_type_id = data_bin[6]
-        print('Length type id: ', length_type_id)
-        if length_type_id == '1':
-            # 11 bit number of how many subpackets are contained
-            amount_subpackets = data_bin[7:18]
-            amount_subpackets_dec = int(amount_subpackets,2)
-            print('Amount of subpackets:', amount_subpackets_dec)
-            i = 0
-            shift = 0
-            for i in range(amount_subpackets_dec):
-                subpackets_start = 18
-                print('Next package starts at:', subpackets_start)
-                print('Next subpacket number:', i+1)
-                # slice the data and go down each individual package
-                subpackets_start+=shift
-                packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
-                print('Next package starts at:', subpackets_start)
-            print('Packet version list:', packet_version_list)
-            return packet_version_list, subpackets_start
-        
-        elif length_type_id == '0':
-            # has a 15 bit number following the total length of the subpackets contained
-            length_subpacket = data_bin[7:22]
-            length_subpacket_dec = int(length_subpacket,2)
-            subpackets_start = 22
-            subpackets_end = subpackets_start+length_subpacket_dec
-            print('Subpackets total length:', length_subpacket_dec)
-            print('Subpackets end:', subpackets_end)
-            shift = 0
-            while (subpackets_start+shift < subpackets_end and len(data_bin[subpackets_start:subpackets_end])>10):
-                packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
-                subpackets_start+=shift
-                print('Current Index to shift:', shift)
-                print('Next package @:', subpackets_start)
-            print('Packet version list:', packet_version_list)
+        print('Version (bin, dec):', version, version_dec)
+        if (type_id_dec == 4):
+            # literal value -> one single binary number, is always the last package, returns the packet_version_list
+            print('TypeID (bin, dec):', type_id, type_id_dec, 'is a literal')
+            value_dec, l = literal_value(data_bin)
+            print('Literal decimal value:', value_dec)
+            last_index = l+1
+            print('Last index of literal:',last_index)
+            return packet_version_list, last_index
             
-            return packet_version_list, subpackets_start
-    
+        else:
+            # operator
+            print('TypeID (bin, dec):', type_id, type_id_dec, 'is an operator')
+            length_type_id = data_bin[6]
+            print('Length type id: ', length_type_id)
+            if length_type_id == '1':
+                # 11 bit number of how many subpackets are contained
+                amount_subpackets = data_bin[7:18]
+                amount_subpackets_dec = int(amount_subpackets,2)
+                print('Amount of subpackets:', amount_subpackets_dec)
+                i = 0
+                shift = 0
+                for i in range(amount_subpackets_dec):
+                    subpackets_start = 18
+                    print('Next package starts at:', subpackets_start)
+                    print('Next subpacket number:', i+1)
+                    # slice the data and go down each individual package
+                    subpackets_start+=shift
+                    packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
+                    print('Next package starts at:', subpackets_start)
+                print('Packet version list:', packet_version_list)
+                return packet_version_list, subpackets_start
+            
+            elif length_type_id == '0':
+                # has a 15 bit number following the total length of the subpackets contained
+                length_subpacket = data_bin[7:22]
+                length_subpacket_dec = int(length_subpacket,2)
+                subpackets_start = 22
+                subpackets_end = subpackets_start+length_subpacket_dec
+                print('Subpackets total length:', length_subpacket_dec)
+                print('Subpackets end:', subpackets_end)
+                shift = 0
+                while (subpackets_start < subpackets_end):
+                    packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
+                    subpackets_start+=shift
+                    print('Current Index to shift:', shift)
+                    print('Next package @:', subpackets_start)
+                print('Packet version list:', packet_version_list)
+                return packet_version_list, subpackets_start
+    else: return packet_version_list, 0
 
 
 def part2(data):
