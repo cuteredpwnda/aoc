@@ -177,12 +177,6 @@ def calculator(term:list):
     new_term = []
     if len(term) == 3 and isinstance(term[-1], str):
         # go through the list from left to right, after two values comes a operand, use operand on those two values in order, create new list with result
-        # unpack if needed
-        for item in term:
-            print(item, type(item))
-            if isinstance(item, list):
-                term[term.index(item)] = item[0]
-
         print('Begin calculation with:', term)
         a = term.pop(0)
         b = term.pop(0)
@@ -195,17 +189,20 @@ def calculator(term:list):
         elif o == 'greater than': new_term.append(int(a>b))
         elif o == 'less than': new_term.append(int(a<b))
         elif o == 'equal to': new_term.append(int(a==b))
-        return new_term[0]
-    elif len(term) >= 3 and isinstance(term[-1], str):        
-        # get all numbers in front of operand
-        number_list = []
+        return new_term
+
+    if len(term) > 3 and isinstance(term[-1], str):
+        # get the subterm
+        subterm = [x for x in term if (isinstance(x, int) or isinstance(x, str))]
+        print('Subterm:', subterm)
         o = term.pop(-1)
         print('Operator:', o)
-        while term:
-            if isinstance(term[-1],int):
-                number_list.append(term.pop(-1))
-                print('Number list:', number_list)
-                print('Remaining Term:', term)
+        # get all numbers in front of operand
+        number_list = [x for x in subterm if isinstance(x, int)]
+        print('Number list:', number_list)
+        for num in number_list:
+            term.pop(-1)
+
         # switch case on o
         if o == 'sum': new_term.append(np.sum(number_list))
         elif o == 'product': new_term.append(np.prod(number_list))
@@ -215,8 +212,9 @@ def calculator(term:list):
         elif o == 'less than': new_term.append(int(number_list[0] < number_list[1]))
         elif o == 'equal to': new_term.append(int(number_list[0] == number_list[1]))
         print('New term:', new_term)
-        return new_term[0]
-    else: return term[0]
+        return new_term
+    
+    return term
 
 def part2(data:str):
     p1_sum, p1_list, _ , calculation = part1(data)
