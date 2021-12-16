@@ -114,13 +114,14 @@ def decode_transmission_block(data_bin:str, packet_version_list:list = []):
                 print('Amount of subpackets:', amount_subpackets_dec)
                 i = 0
                 shift = 0
-                for i in range(amount_subpackets_dec):
-                    subpackets_start = 18
+                subpackets_start = 18
+                while (i < amount_subpackets_dec):
                     print('Next package starts at:', subpackets_start)
                     print('Next subpacket number:', i+1)
                     # slice the data and go down each individual package
-                    subpackets_start+=shift
                     packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
+                    subpackets_start+=shift
+                    i+=1
                     print('Next package starts at:', subpackets_start)
                 print('Packet version list:', packet_version_list)
                 return packet_version_list, subpackets_start
@@ -136,7 +137,7 @@ def decode_transmission_block(data_bin:str, packet_version_list:list = []):
                 shift = 0
                 while (subpackets_start < subpackets_end):
                     packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
-                    subpackets_start+=shift
+                    subpackets_start+=shift                   
                     print('Current Index to shift:', shift)
                     print('Next package @:', subpackets_start)
                 print('Packet version list:', packet_version_list)
