@@ -74,7 +74,7 @@ def literal_value(bin:str) -> tuple[int,int]:
         value += v_content
         l+=5 # increase length by 5
         if s == '0': break
-    print('Value: ', value)
+    print('Value: ', value, 'Length of Value:', l)
 
     return int(value, 2), l
 
@@ -91,7 +91,16 @@ def decode_transmission_block(data_bin:str, packet_version_list:list = []):
     print('Packet version list:', packet_version_list)
 
     print('Version (bin, dec):', version, version_dec)
-    if (type_id_dec != 4):
+    if (type_id_dec == 4):
+        # literal value -> one single binary number, is always the last package, returns the packet_version_list
+        print('TypeID (bin, dec):', type_id, type_id_dec, 'is a literal')
+        value_dec, l = literal_value(data_bin)
+        print('Literal decimal value:', value_dec)
+        last_index = l+1
+        print('Last index of literal:',last_index)
+        return packet_version_list, last_index
+        
+    else:
         # operator
         print('TypeID (bin, dec):', type_id, type_id_dec, 'is an operator')
         length_type_id = data_bin[6]
@@ -103,20 +112,17 @@ def decode_transmission_block(data_bin:str, packet_version_list:list = []):
             print('Amount of subpackets:', amount_subpackets_dec)
             i = 0
             shift = 0
-            # TODO FIX THIS, off by one for 620080001611562C8802118E34
             for i in range(amount_subpackets_dec):
                 subpackets_start = 18
                 print('Next package starts at:', subpackets_start)
                 print('Next subpacket number:', i+1)
                 # slice the data and go down each individual package
-                _, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
-                subpackets_start+=shift    
+                subpackets_start+=shift
+                packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
                 print('Next package starts at:', subpackets_start)
-                print('Shift index by:', shift)
             print('Packet version list:', packet_version_list)
             return packet_version_list, subpackets_start
         
-        # TODO FIX THIS
         elif length_type_id == '0':
             # has a 15 bit number following the total length of the subpackets contained
             length_subpacket = data_bin[7:22]
@@ -124,21 +130,17 @@ def decode_transmission_block(data_bin:str, packet_version_list:list = []):
             subpackets_start = 22
             subpackets_end = subpackets_start+length_subpacket_dec
             print('Subpackets total length:', length_subpacket_dec)
-            curr_index_shift = 0
-            while (curr_index_shift < subpackets_end-subpackets_start): 
-                _, shift = decode_transmission_block(data_bin[subpackets_start+curr_index_shift:subpackets_end], packet_version_list)
-                curr_index_shift+=shift          
-                print('Current Index to shift:', curr_index_shift)
+            print('Subpackets end:', subpackets_end)
+            shift = 0
+            while (subpackets_start+shift < subpackets_end and len(data_bin[subpackets_start:subpackets_end])>10):
+                packet_version_list, shift = decode_transmission_block(data_bin[subpackets_start:], packet_version_list)
+                subpackets_start+=shift
+                print('Current Index to shift:', shift)
+                print('Next package @:', subpackets_start)
             print('Packet version list:', packet_version_list)
+            
             return packet_version_list, subpackets_start
-    else:
-        # literal value -> one single binary number, is always the last package, returns the packet_version_list
-        print('TypeID (bin, dec):', type_id, type_id_dec, 'is a literal')
-        value_dec, l = literal_value(data_bin)
-        print('Literal decimal value:', value_dec)
-        last_index = l+1
-        print('Last index of literal:',last_index)
-        return packet_version_list, last_index
+    
 
 
 def part2(data):
