@@ -42,7 +42,6 @@ def part1(data:str)->int:
     min_x = min(x_range)
     max_y = max(y_range)
     min_y = min(y_range)
-    print(max_x, min_x, max_y, min_y)
 
     velocities = {}
     
