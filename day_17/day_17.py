@@ -23,6 +23,11 @@ def read_input(path_to_file:str = 'input/raw_input.txt') -> str:
         data = f.readlines()[0].strip('\n')
     return data
 
+def read_test_res(path_to_file:str = 'input/test_result.txt'):
+    with open(path_to_file) as f:
+        data = f.readlines()[0].split('|')
+    return data
+
 # panic button
 panic = 0
 
@@ -33,40 +38,37 @@ def part1(data:str)->int:
     y_range = [int(x) for x in data[1].split('=')[-1].split('..')]
 
     # draw the target area
-    max_x = max(x_range)+1
+    max_x = max(x_range)
     min_x = min(x_range)
     max_y = max(y_range)
     min_y = min(y_range)
-    v_range = (min_y, max_x)
-    v_start_list = [pt for pt in list(product(range(v_range[0], v_range[1]), repeat=2)) if pt[0]>min_x and pt[1]<max_y]
+    print(max_x, min_x, max_y, min_y)
 
-    velocities = {x:0 for x in v_start_list}
+    velocities = {}
+    lower_x_bound = round((np.sqrt(8*min_x+1)-1)/2)
+    print(lower_x_bound)
+    for vel_x in range(0, max_x+1):
+        for vel_y in range(max(abs(min_y), abs(max_y)), min_y-1, -1):
+            new_x = 0
+            new_y = 0
+            curr_vel_x = vel_x
+            curr_vel_y = vel_y
+            # calc
+            while ((new_x <= max_x+1) and (min_y-1 <= new_y)):
+                new_x += curr_vel_x
+                new_y += curr_vel_y
+                
+                curr_vel_x -= 1
+                curr_vel_y -= 1
+                
+                if curr_vel_x <= 0:
+                    curr_vel_x = 0
+                
+                # if target field is reached
+                if ((min_x <= new_x <= max_x) and (min_y <= new_y <= max_y)):
+                    velocities[(vel_x, vel_y)] = (vel_y * (vel_y+1))//2
 
-    def calculate_hit(intial_velocity):
-        vel_x = intial_velocity[0]
-        vel_y = intial_velocity[1]
-
-        for vel_x in range(0, max_x):
-            for vel_y in range(0, min_y, -1):
-                curr_vel_x = vel_x
-                curr_vel_y = vel_y
-                new_x = 0
-                new_y = 0
-                # calc
-                while ((new_x <= max_x) and (new_y >= min_y)):
-                    new_x += curr_vel_x
-                    new_y += curr_vel_y
-                    curr_vel_x -= 1
-                    curr_vel_y -= 1
-                    if curr_vel_x <= 0:
-                        curr_vel_x = 0
-                    if (new_x in range(min_x, max_x) and new_y in range(min_y, max_y)):
-                        velocities[intial_velocity] = int((vel_y * (vel_y-1)/2))
-                        break
-
-    for v_start in v_start_list:
-        calculate_hit(v_start)
-    return max(velocities.values())
+    return max(velocities.values()), len(velocities.keys())
 
 def part1_shitty(data:str)->int:
     global panic
@@ -227,15 +229,11 @@ def test():
 if __name__ == '__main__':
     data = read_input()
     test()
-
-    start_time = time.perf_counter()
-    print('\nResult for part 1: ', part1(data))
-    finish_time = time.perf_counter()
-    print(f"Calculated part 1 in {(finish_time - start_time):0.4f}s")
     
-    '''
     start_time = time.perf_counter()
-    print('\nResult for part 2: ', part2(data))
+    p1, p2 = part1(data)
+    print('\nResult for part 1: ', p1)
+    print('\nResult for part 2: ', p2)
     finish_time = time.perf_counter()
-    print(f"Calculated part 2 in {(finish_time - start_time):0.4f}s")
-    '''
+    print(f"Calculated both parts in {(finish_time - start_time):0.4f}s")
+    
