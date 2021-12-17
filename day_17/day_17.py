@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 import numpy as np
+from itertools import product
 
 def read_input(path_to_file:str = 'input/raw_input.txt') -> str:
     """read_input Read the input
@@ -26,6 +27,48 @@ def read_input(path_to_file:str = 'input/raw_input.txt') -> str:
 panic = 0
 
 def part1(data:str)->int:
+    data = data.split(':')[-1]
+    data = data.split(',')
+    x_range = [int(x) for x in data[0].split('=')[-1].split('..')]
+    y_range = [int(x) for x in data[1].split('=')[-1].split('..')]
+
+    # draw the target area
+    max_x = max(x_range)+1
+    min_x = min(x_range)
+    max_y = max(y_range)
+    min_y = min(y_range)
+    v_range = (min_y, max_x)
+    v_start_list = [pt for pt in list(product(range(v_range[0], v_range[1]), repeat=2)) if pt[0]>min_x and pt[1]<max_y]
+
+    velocities = {x:0 for x in v_start_list}
+
+    def calculate_hit(intial_velocity):
+        vel_x = intial_velocity[0]
+        vel_y = intial_velocity[1]
+
+        for vel_x in range(0, max_x):
+            for vel_y in range(0, min_y, -1):
+                curr_vel_x = vel_x
+                curr_vel_y = vel_y
+                new_x = 0
+                new_y = 0
+                # calc
+                while ((new_x <= max_x) and (new_y >= min_y)):
+                    new_x += curr_vel_x
+                    new_y += curr_vel_y
+                    curr_vel_x -= 1
+                    curr_vel_y -= 1
+                    if curr_vel_x <= 0:
+                        curr_vel_x = 0
+                    if (new_x in range(min_x, max_x) and new_y in range(min_y, max_y)):
+                        velocities[intial_velocity] = int((vel_y * (vel_y-1)/2))
+                        break
+
+    for v_start in v_start_list:
+        calculate_hit(v_start)
+    return max(velocities.values())
+
+def part1_shitty(data:str)->int:
     global panic
 
     data = data.split(':')[-1]
@@ -44,6 +87,8 @@ def part1(data:str)->int:
     for row in range(min_y, max_y):
         for col in range(min_x, max_x):
             field[row,col] = 'T' 
+    min_to_T = min_x
+    max_to_T = max_x
 
     # declare the trajectory variables
     start_point = (0,0)
@@ -57,66 +102,95 @@ def part1(data:str)->int:
     print('Startpoint, a, v:', start_point, a_vec, v_vec)
 
     # pad the field
-    padding = 8
+    padding = 1000
     padded = np.pad(field, pad_width=padding, mode='constant', constant_values = '.')
     padded_start = (start_point[0]+padding, start_point[1]+padding)
     print('Padded start:', padded_start)
+    print('Padded matrix dim:', padded.shape)
 
     # to be in the target area the v_vec must be [0,0] and the content of the field must be 'T'
 
-    def step(pt:tuple[int, int], curr_v:np.array, m:np.array, current_padding:int):
+    def step(pt:tuple[int, int], curr_v:np.array, m:np.array):
         global panic
-        if curr_v[0] > 50:
+        
+        if curr_v[0] > 200:
             print('This is very fast, probably an error:')
             panic = 1
-            return pt, curr_v, m, current_padding
+            return pt, curr_v, m
 
         new_y = pt[0]+curr_v[0]
         new_x = pt[1]+curr_v[1]
         new_pt = (new_y, new_x)
+        if new_pt[0] >= padded.shape[0] or new_pt[1] >= padded.shape[1]:
+            #print('Out of bounds, will never reach.')
+            panic = 1
+            return pt, curr_v, m
 
         # if below any T, can not reach anymore
         if new_y > max(np.where(m=='T')[0]):
-            print('Below any target y-position, you will never reach the target.')
+            #print('Below any target y-position, you will never reach the target.')
             panic = 1
-            return pt, curr_v, m, current_padding
+            return pt, curr_v, m
 
         # calculate the new values
         new_v = np.add(curr_v, a_vec)
         if new_v[1] < 0:
             new_v[1] = 0
-
-        # check if still in bounds
-        if new_y >= m.shape[0] or new_x >= m.shape[1]:
-            new_pad = max(new_v) + 1
-            print(current_padding)
-            m = np.pad(m, pad_width=new_pad, mode='constant', constant_values = '.')            
+        
         else:
             m[pt_probe] = '#'
             m[padded_start] = 'S'
-            new_pad = 0
-        return new_pt, new_v, m, current_padding+new_pad
-    
-    
-   
+        return new_pt, new_v, m
 
     # init velocity list
-    v_start_list = [[-2,7]]
-    # start velocity and pt:
+    #v_start_list = [[-2,7]]
+    v_range = (-50, max_to_T+1)
+    v_start_list = [pt for pt in list(product(range(v_range[0], v_range[1]), repeat=2)) if (pt[1]>=min_to_T and pt[0]<=0)][::-1]
+    #v_start_list = [(-60, min_to_T)]
+
+    print(v_start_list)
+    print(len(v_start_list))
+    success_points:set = set()
+    probe_max_y:dict = {x : 0 for x in v_start_list}
+    print(len(probe_max_y.keys()))
+    
     for v_start in v_start_list:
+        #print('Testing with:', v_start)
         # init for looping
         pt_probe = padded_start
         v_probe = v_start
+        panic = 0
+        probe_max_y[v_start] = pt_probe[0]
+        
         while (panic!=1):
-            pt_probe, v_probe, padded, padding = step(pt_probe, v_probe, padded, padding)
-            print('New Positon:', pt_probe, 'New speed:', v_probe)
-            #custom_print(padded)
+            # check if better one has been found
+            print('Current successful throws:', success_points, 'best throw found:', any(x[0] < v_start[0] for x in success_points), end='\r')
+            if any(x[0] < v_start[0] for x in success_points) :
+                    print('Found the best throw{}!'.format(np.add(pt_probe, -padding)))
+                    break
+            # check if above target
+            if v_probe[1]==0 and v_probe[0]<= padding + min_y:
+                print('Will reach the target!{}!'.format(np.add(pt_probe, -padding)))
+                success_points.add(v_start)
+                continue
+            #print('Values before stepping:\ncoords of probe: {}, velocity of probe: {}'.format(pt_probe, v_probe))
+            pt_probe, v_probe, padded = step(pt_probe, v_probe, padded)
+            
+                
+            if pt_probe[0] < probe_max_y[v_start]:
+                probe_max_y[v_start] = pt_probe[0]
             if padded[pt_probe] == 'T':
                 padded[pt_probe] = '#'
-                custom_print(padded)
+                success_points.add(v_start)
+                #print('Size before yeeting:', len(v_start_list))
+                #v_start_list = [v for v in v_start_list if v[0]<=v_start]
+                #print('Size after yeeting:', len(v_start_list))
                 print('Successfully reached the target at{}!'.format(np.add(pt_probe, -padding)))
                 continue
 
+    success_max_y = {k:v for k,v in probe_max_y.items() if k in success_points}
+    print(success_max_y)
+    print('Maximal height reached:', padding - min(success_max_y.values()))
     return 0
 
 
@@ -136,7 +210,14 @@ def test():
     print('\nResult for part 1 in test: ', part1(out))
     finish_time = time.perf_counter()
     print(f"Calculated part 1 in {(finish_time - start_time):0.4f}s")
+
+    # shitty pt 1
     '''
+    start_time = time.perf_counter()
+    print('\nResult for part 1 in test: ', part1_shitty(out))
+    finish_time = time.perf_counter()
+    print(f"Calculated part 1 in {(finish_time - start_time):0.4f}s")
+
     start_time = time.perf_counter()
     print('\nResult for part 2 in test: ', part2(out))
     finish_time = time.perf_counter()
@@ -147,12 +228,11 @@ if __name__ == '__main__':
     data = read_input()
     test()
 
-    '''
     start_time = time.perf_counter()
     print('\nResult for part 1: ', part1(data))
     finish_time = time.perf_counter()
     print(f"Calculated part 1 in {(finish_time - start_time):0.4f}s")
-    '''
+    
     '''
     start_time = time.perf_counter()
     print('\nResult for part 2: ', part2(data))
