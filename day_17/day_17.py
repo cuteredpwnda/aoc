@@ -45,8 +45,7 @@ def part1(data:str)->int:
     print(max_x, min_x, max_y, min_y)
 
     velocities = {}
-    lower_x_bound = round((np.sqrt(8*min_x+1)-1)/2)
-    print(lower_x_bound)
+    
     for vel_x in range(0, max_x+1):
         for vel_y in range(max(abs(min_y), abs(max_y)), min_y-1, -1):
             new_x = 0
