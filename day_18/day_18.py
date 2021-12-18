@@ -39,7 +39,7 @@ def magnitude(x):
     # 3* magnitude of left element + 2*magnitude of the right element -> just a number
     if isinstance(x, int):
         return x
-    return 3 * magnitude(x[0]) + 2 * magnitude(x[1])
+    return 3*magnitude(x[0]) + 2*magnitude(x[1])
 
 
 def l_addition(fish_num, acc):
