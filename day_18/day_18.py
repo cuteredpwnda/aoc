@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import itertools
 import time
 import numpy as np
 from functools import reduce
+from itertools import permutations
 
 
 def read_input(path_to_file:str = 'input/raw_input.txt') -> list:
@@ -41,7 +43,8 @@ def magnitude(x):
 
 
 def l_addition(fish_num, acc):
-    print('Doing a left addition with: {}'.format(fish_num))
+    global debug
+    if debug: print('Doing a left addition with: {}'.format(fish_num))
     if acc is None:
         return fish_num
     if isinstance(fish_num, int):
@@ -50,7 +53,8 @@ def l_addition(fish_num, acc):
     return [l_addition(fish_num[0], acc), fish_num[1]]
 
 def r_addition(fish_num, acc):
-    print('Doing a right addition with: {}'.format(fish_num))
+    global debug
+    if debug: print('Doing a right addition with: {}'.format(fish_num))
     if acc is None:
         return fish_num
     if isinstance(fish_num, int):
@@ -78,7 +82,8 @@ def explode(fish_num, d:int=4):
     [type]
         [description]
     """
-    print('Doing an explosion with: {}'.format(fish_num))
+    global debug
+    if debug: print('Doing an explosion with: {}'.format(fish_num))
     if isinstance(fish_num, int):
         return False, None, fish_num, None
     # everything already exploded
@@ -112,7 +117,8 @@ def split(fish_num):
     v : [type]
         [description]
     """
-    print('Splitting: {}'.format(fish_num))
+    global debug
+    if debug: print('Splitting: {}'.format(fish_num))
     if isinstance(fish_num, int):
         if fish_num >= 10:
             return True, [fish_num//2, int(np.ceil(fish_num/2))]
@@ -130,7 +136,8 @@ def split(fish_num):
 
 
 def addition(a, b):
-    print('Doing an addition with: {} and {}'.format(a, b))
+    global debug
+    if debug: print('Doing an addition with: {} and {}'.format(a, b))
     # is just a reduction of a and b
     fish_num = [a,b]
     while True:
@@ -147,12 +154,26 @@ def addition(a, b):
 
 
 def part2(data:str):
-   return 0
+    max_magnitude = 0
+    
+    # get each combination
+    perm = list(itertools.permutations(data, 2))
+    for item in perm:
+        a = item[0]
+        b = item[1]
+        result = addition(a, b)
+        curr_mag = magnitude(result)
+        if curr_mag >= max_magnitude:
+            max_magnitude = curr_mag
+    print('Amount of permutations:', len(perm))
+    return max_magnitude
 
 
 def test():
+    global debug
+    debug = True
     out = read_input(path_to_file='input/test_input.txt')
-    
+    '''
     start_time = time.perf_counter()
     print('\nResult for part 1 in test: ', part1(out))
     finish_time = time.perf_counter()
@@ -162,11 +183,13 @@ def test():
     print('\nResult for part 2 in test: ', part2(out))
     finish_time = time.perf_counter()
     print(f"Calculated part 2 in {(finish_time - start_time):0.4f}s")    
-    '''
+    debug = False
     
+debug = False
+
 if __name__ == '__main__':
     data = read_input()
-    test()
+    #test()
 
     '''
     start_time = time.perf_counter()
@@ -174,9 +197,9 @@ if __name__ == '__main__':
     finish_time = time.perf_counter()
     print(f"Calculated part 1 in {(finish_time - start_time):0.4f}s")
     '''
-    '''
+    
     start_time = time.perf_counter()
     print('\nResult for part 2: ', part2(data))
     finish_time = time.perf_counter()
     print(f"Calculated part 2 in {(finish_time - start_time):0.4f}s")
-    '''
+    
