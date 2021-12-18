@@ -19,25 +19,28 @@ def read_input(path_to_file:str = 'input/raw_input.txt') -> str:
     """
 
     with open(path_to_file) as f:
-        data = f.readlines()[0].strip('\n')
+        data = f.readlines()
+    data = [line.strip('\n') for line in data]
     return data
 
 def part1(data:str)->int:
-    """part1 Method for solving part 1.
+    # addition
+    print(data)
 
-    [extended_summary]
+    # explode when nested in 4 pairs
+    # left value + the first regular number to the left
+    # right value + the first regular number to the right
+    # replace with 0
 
-    Parameters
-    ----------
-    data : str
-        The transmission coming in.
 
-    Returns
-    -------
-    int
-        Solution of part 1, sum of all version numbers in transmission.
-    """
-    
+    # split leftmost if >10
+    # replace with a new pair
+    # left is regular number //2, right is a regular number /2 -> ceil
+
+    # reduce
+
+    # check magnitude
+    # 3* magnitude of left element + 2*magnitude of the right element -> just a number
     return 0
 
 
