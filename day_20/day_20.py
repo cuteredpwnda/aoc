@@ -31,10 +31,8 @@ def part1(enhancement:np.array, image:np.array, enhance_amount:int=2)->int:
 
     for i in range(enhance_amount):
         image,empty_char = enhance_image(enhancement, image, empty_char)
-    
-    image[image=='1'] = '#'
-    image[image=='0'] = '.'
-    return (image=='#').sum()
+        
+    return (image=='1').sum()
 
 
 def part2(enhancement:np.array, image:np.array, amount:int=50):
