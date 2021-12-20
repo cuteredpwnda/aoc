@@ -20,17 +20,14 @@ def part1(enhancement:np.array, image:np.array, enhance_amount:int=2)->int:
 
     def enhance_image(enhancement, image, empty_char=0):
         image = np.pad(image, 3, constant_values=empty_char)
-        if empty_char == 0:
-            out_image = np.zeros_like(image)
-        else:
-            out_image = np.ones_like(image)
+        out_image = np.full_like(image, empty_char)
         ylen,xlen = image.shape
         for i in range(1,ylen-1):
             for j in range(1,xlen-1):
                 idx = image[i-1:i+2, j-1:j+2].flatten()
-                idx = int("".join(map(str, idx)), 2)
+                idx = int(''.join(map(str, idx)), 2)
                 out_image[i,j] = enhancement[idx]
-        return out_image[1:-1, 1:-1], enhancement[0] if empty_char == 0 else enhancement[int("111111111", 2)]
+        return out_image[1:-1, 1:-1], enhancement[0] if empty_char == 0 else enhancement[511]
 
     for i in range(enhance_amount):
         image,empty_char = enhance_image(enhancement, image, empty_char)
@@ -38,8 +35,6 @@ def part1(enhancement:np.array, image:np.array, enhance_amount:int=2)->int:
     image[image=='1'] = '#'
     image[image=='0'] = '.'
     return (image=='#').sum()
-
-
 
 
 def part2(enhancement:np.array, image:np.array, amount:int=50):
