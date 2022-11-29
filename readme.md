@@ -1,3 +1,7 @@
+# Advent of Code 2022
+[Link](https://adventofcode.com/2022/)
+
+
 # Advent of Code 2021
 
 [Link](https://adventofcode.com/2021/)
