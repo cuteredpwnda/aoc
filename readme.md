@@ -1,5 +1,6 @@
 # Advent of Code 2022
 [Link](https://adventofcode.com/2022/)
+
 Solving the puzzles from the Advent of Code 2022 using Julia.
 
 ## Day 0 - Template
