@@ -15,7 +15,6 @@ end
 
 today = Dates.day(now())
 day_pad = padDate(today)
-test_day = padDate(Dates.day(now() + Day(1)))
 
 if today === nothing
     today = "01"
