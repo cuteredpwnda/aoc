@@ -28,3 +28,4 @@ function part2(input)
 end
 
 (max, sums) = part1(input)
+println(max)
