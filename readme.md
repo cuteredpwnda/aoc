@@ -88,13 +88,13 @@ Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). Th
 <h1 align="center">
   2021 - 37 ⭐
 </h1>
-<a href="2021/day_01/CHANGELOG.md">
+<a href="None">
   <img src="Media/2021/01.png" width="161px">
 </a>
-<a href="2021/day_02/CHANGELOG.md">
+<a href="None">
   <img src="Media/2021/02.png" width="161px">
 </a>
-<a href="2021/day_03/CHANGELOG.md">
+<a href="None">
   <img src="Media/2021/03.png" width="161px">
 </a>
 <a href="2021/day_04/day_04.py">
