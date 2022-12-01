@@ -47,9 +47,11 @@ for day in days_to_generate
             end
             url = "$baseurl/$(parse(Int64, pad))/input"
             cookie = ENV["AOC_COOKIE"]
+            user_agent = ENV["AOC_USER_AGENT"]
             # get input
             if !isfile(joinpath(folder_template, "input", "input.txt"))
-                run(`curl -s $url --output $folder_template/input/input.txt --cookie "session=$cookie"`)
+                run_cmd = `curl -s $url --output $folder_template/input/input.txt --cookie "session=$cookie" --user-agent $user_agent`
+                run(run_cmd)
             else
                 println("Input already exists.")
             end
