@@ -1,3 +1,0 @@
-[submodule "adventofcode"]
-	path = adventofcode
-	url = git@github.com:LiquidFun/adventofcode.git
