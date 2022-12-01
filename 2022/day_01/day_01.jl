@@ -24,8 +24,15 @@ end
 
 # Part 2
 function part2(input)
-    return nothing
+    sorted = sort(input, by=x -> x[2])
+    # take the last three elements and sum them up
+    return sum([calories for (i, calories) in sorted[end-2:end]])
 end
 
+# Part 1
 (max, sums) = part1(input)
 println(max)
+
+# Part 2 works with the sums of part 1
+last_three_sum = part2(sums)
+println(last_three_sum)
