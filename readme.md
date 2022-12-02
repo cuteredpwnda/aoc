@@ -16,7 +16,7 @@ Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). Th
 <a href="2022/day_02/day_02.jl">
   <img src="Media/2022/02.png" width="161px">
 </a>
-<a href="None">
+<a href="2022/day_03/day_03.jl">
   <img src="Media/2022/03.png" width="161px">
 </a>
 <a href="None">
