@@ -8,16 +8,13 @@ Solving the puzzles from the Advent of Code 2022 using Julia.
 Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). This is my first approach to this language.
 <!-- AOC TILES BEGIN -->
 <h1 align="center">
-  2022 - 2 ⭐
+  2022 - 4 ⭐
 </h1>
 <a href="2022/day_01/day_01.jl">
   <img src="Media/2022/01.png" width="161px">
 </a>
 <a href="2022/day_02/day_02.jl">
   <img src="Media/2022/02.png" width="161px">
-</a>
-<a href="2022/day_03/day_03.jl">
-  <img src="Media/2022/03.png" width="161px">
 </a>
 <h1 align="center">
   2021 - 37 ⭐

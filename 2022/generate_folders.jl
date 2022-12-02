@@ -13,11 +13,9 @@ function padDate(date::Int64)
 end
 
 today = Dates.day(now())
-tomorrow = today + 1
 day_pad = padDate(today)
-tomorrow_pad = padDate(tomorrow)
 
-days_to_generate = [day_pad, tomorrow_pad]
+days_to_generate = [day_pad]
 for day in days_to_generate
     if day === nothing
         pad = "01"

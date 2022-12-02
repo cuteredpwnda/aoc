@@ -12,3 +12,9 @@ end
 function part2(input)
     return nothing
 end
+
+res = part1(input)
+println("Part 1: $res")
+
+res2 = part2(input)
+println("Part 2: $res2")
