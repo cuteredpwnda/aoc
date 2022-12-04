@@ -16,8 +16,8 @@ function part1(input)
     for line in input
         (a,b) = split(line, ",")
         array_a, array_b = createRanges(a, b)
-        difference = intersect(array_a, array_b)
-        if length(difference) == length(array_a) || length(difference) == length(array_b)
+        intersection = intersect(array_a, array_b)
+        if length(intersection) == length(array_a) || length(intersection) == length(array_b)
             sum += 1
         end
     end
@@ -31,8 +31,8 @@ function part2(input)
     for line in input
         (a,b) = split(line, ",")
         array_a, array_b = createRanges(a, b)
-        difference = intersect(array_a, array_b)
-        if length(difference) > 0
+        intersection = intersect(array_a, array_b)
+        if length(intersection) > 0
             sum += 1
         end
     end
