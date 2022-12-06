@@ -1,7 +1,6 @@
 function get_signal_start(signal, start_after)
     for i in eachindex(signal)
-        unique_chars = Set(signal[i:(i+start_after-1)])
-        if length(unique_chars) == start_after
+        if length(Set(signal[i:(i+start_after-1)])) == start_after
             return i+start_after-1
         end
     end
