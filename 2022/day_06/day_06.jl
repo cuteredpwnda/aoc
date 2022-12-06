@@ -1,21 +1,20 @@
-# Part 1
-function part1(input)
-    for i in eachindex(input[1])
-        unique_chars = Set(input[1][i:i+3])
-        if length(unique_chars) == 4
-            return i+3
+function get_signal_start(signal, start_after)
+    for i in eachindex(signal)
+        unique_chars = Set(signal[i:(i+start_after-1)])
+        if length(unique_chars) == start_after
+            return i+start_after-1
         end
     end
 end
 
+# Part 1
+function part1(input)
+    get_signal_start(input[1], 4)
+end
+
 # Part 2
 function part2(input)
-    for i in eachindex(input[1])
-        unique_chars = Set(input[1][i:i+13])
-        if length(unique_chars) == 14
-            return i+13
-        end
-    end
+    get_signal_start(input[1], 14)
 end
 
 function main()
