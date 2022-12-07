@@ -1,61 +1,100 @@
+struct File
+    filename :: String
+    size :: Int64
+end
+Base.show(io::IO, f::File) = print(
+io,"- $(f.filename) (file, size=$(f.size))"
+)
 mutable struct Directory
     dirname :: String
-    content :: Array{String}
-    files :: Array{String}
+    content :: Union{Array{String}, Nothing}
+    files :: Union{Array{File}, Nothing}
     parent :: Union{Directory, Nothing}
-    child_dirs :: Array{Directory}
+    child_dirs :: Union{Array{Directory}, Nothing}
 end
+
 
 Base.show(io::IO, s::Directory) = print(
 io,"""
-Directory: $(s.dirname)
-Content: $(s.content)
-Files: $(s.files)
+Directory: $(s.dirname) (dir)
+Content: $(s.content === nothing ? "None" : s.content)
+Files: $(s.files === nothing ? "None" : [s.filename for s in s.files])
 Parent: $(s.parent === nothing ? "None" : s.parent.dirname)
-Child Directories: $([x.dirname for x in s.child_dirs])
+Child Directories: $(s.child_dirs === nothing ? "None" : [x.dirname for x in s.child_dirs])
 """
 )
+
+function get_subdirs(dir::Directory) :: Array{Directory}
+    subdirs = []
+    for item in dir.content
+        is_dir = match(r"dir ", item)
+        if is_dir !== nothing
+            dir_name = split(item, " ")[end]
+            directory = Directory(dir_name, nothing, nothing, dir, nothing)
+            push!(subdirs, directory)
+        end
+    end
+    return subdirs
+end
+
+function get_content(possible_dir_contents::Array) :: Array{String}
+    max_index = length(possible_dir_contents)
+    for (j, content) in enumerate(possible_dir_contents)
+        m = match(r"^\$ ", content)
+        # check if new command
+        if  m !== nothing
+            max_index = j
+            break
+        end
+    end
+    return possible_dir_contents[1:max_index-1]
+end
 
 # Part 1
 function part1(input)
     directories = []
-    parent_dir = nothing
-    curr_dir = nothing
-    base_dir = directory = Directory("\\", [], [], parent_dir, [])
+    base_dir = Directory("\\", nothing, nothing, nothing, nothing)
+    parent_dir = base_dir
+    curr_dir = base_dir
+    push!(directories, base_dir)
     # get subdirectories and files
-    for (i, line) in enumerate(input)
-        new_dir = match(r"^\$ cd ", line)
+    for (i, line) in enumerate(input[2:end])
         ls = match(r"^\$ ls", line)
-        if new_dir !== nothing
-            dir_name = split(line, " ")[end]
-            directory = Directory(dir_name, [], [], parent_dir, [])
-            # set as current directory
-            curr_dir = directory
-        end
+        cd = match(r"^\$ cd", line)
         # list contents of directory
         if ls !== nothing
-            possible_dir_contents = input[i+1:end]
-            max_index = length(possible_dir_contents)
-            for (j, content) in enumerate(possible_dir_contents)
-                if match(r"\$", content) !== nothing
-                    max_index = j
-                    break
-                end
-            end
-            content = possible_dir_contents[1:max_index-1]
-            curr_dir.content = content
-            println(curr_dir)
-            # get size of files in dir
+            possible_dir_contents = input[i+2:end]
+            curr_dir.content = get_content(possible_dir_contents)
+            #println("dir: $(curr_dir.dirname)\n  content: $(curr_dir.content)")
+            # get size of files in directory
             for item in curr_dir.content
                 is_file = match(r"\d+", item)
                 is_dir = match(r"dir ", item)
                 if is_file !== nothing
-                    push!(curr_dir.files, item)
+                    fn = split(item, " ")[end]
+                    file = File(fn, parse(Int64, is_file.match))
+                    if curr_dir.files === nothing                        
+                        curr_dir.files = [file]
+                    else
+                        push!(curr_dir.files, file)
+                    end
+                end
+                if is_dir !== nothing
+                    dir_name = split(item, " ")[end]
+                    directory = Directory(dir_name, nothing, nothing, curr_dir, nothing)
+                    if curr_dir.child_dirs === nothing
+                        curr_dir.child_dirs = [directory]
+                    else
+                        push!(curr_dir.child_dirs, directory)
+                    end
                 end
             end
+            i += length(curr_dir.content)
+        end
+        # if directory changes
+        if cd !== nothing
         end
     end
-    println(directories)
     return nothing
 end
 
