@@ -12,8 +12,10 @@ function main()
     input = open(joinpath(@__DIR__, "input", "input.txt")) do f
         readlines(f)
     end
-    @show part1(input)
-    @show part2(input) 
+    p1 = part1(input)
+    p2 = part2(input)
+    @show p1
+    @show p2
 end
 
 main()
