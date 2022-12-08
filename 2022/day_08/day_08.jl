@@ -23,6 +23,22 @@ function print_matrix(m)
     end
 end
 
+function partition_views(j::Int64, i::Int64, m::Matrix) :: Tuple{Vector, Vector, Vector, Vector}
+    return m[j, 1:i-1], m[j, i+1:end], m[1:j-1, i], m[j+1:end, i]
+end
+
+function get_visibility(item::Int64, l::Vector, r::Vector, t::Vector, b::Vector)::Vector{Bool}
+    return [(maximum(x) < item) for x in [l, r, t, b]]
+end
+
+function find_blocking(item::Int64, l::Vector, r::Vector, u::Vector, d::Vector)::Vector{Union{Int64, Nothing}}
+    return [findfirst([x < item for x in z].== false) for z in collect(z in [l, u] ? reverse(z) : z for z in [l, r, u, d])]
+end
+
+function calculate_scenic_score(partition::Tuple{Vector, Vector, Vector, Vector}, blocking::Vector{Union{Int64, Nothing}})::Int64
+    return prod([y === nothing ? length(x) : y for (x, y) in zip(partition, blocking)])
+end
+
 # Part 1
 function part1(input)
     field, is_visible = init_matrix(input)
@@ -33,18 +49,7 @@ function part1(input)
                 is_visible[j, i] = true
                 continue
             end
-            # check if max, set is_visible to true
-            left_part = field[j, 1:i-1]
-            right_part = field[j, i+1:end]
-            top_part = field[1:j-1, i]
-            bottom_part = field[j+1:end, i]
-            visible_from_left = (maximum(left_part) < item)
-            visible_from_right = (maximum(right_part) < item)
-            visible_from_top = (maximum(top_part) < item)
-            visible_from_bottom = (maximum(bottom_part) < item)
-            if visible_from_left || visible_from_right || visible_from_top || visible_from_bottom
-                is_visible[j, i] = true
-            end
+            is_visible[j, i] = any(get_visibility(item, partition_views(j, i, field)...)) ? true : false
         end 
     end
     c = counter(is_visible)
@@ -61,21 +66,8 @@ function part2(input)
                 scenic_scores[j, i] = 0
                 continue
             end
-            # check if max, set is_visible to true
-            left_part = field[j, 1:i-1]
-            right_part = field[j, i+1:end]
-            top_part = field[1:j-1, i]
-            bottom_part = field[j+1:end, i]
-            see_left = findfirst([x < item for x in reverse(left_part)].== false)
-            see_right = findfirst([x < item for x in right_part].== false)
-            see_up = findfirst([x < item for x in reverse(top_part)].== false)
-            see_down = findfirst([x < item for x in bottom_part].== false)
-            left_score = see_left === nothing ? length(left_part) : see_left
-            right_score = see_right === nothing ? length(right_part) : see_right
-            top_score = see_up === nothing ? length(top_part) : see_up
-            bottom_score = see_down === nothing ? length(bottom_part) : see_down
-            score = left_score * right_score * top_score * bottom_score
-            scenic_scores[j, i] = score
+            partition = partition_views(j, i, field)
+            scenic_scores[j, i] = calculate_scenic_score(partition, find_blocking(item, partition...))
         end
     end
     return maximum(scenic_scores)
