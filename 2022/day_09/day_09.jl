@@ -1,6 +1,7 @@
 using DataStructures
 using ProgressBars
 using ProgressLogging
+using Parameters
 
 function print_matrix(m)
     str = ""
@@ -11,12 +12,19 @@ function print_matrix(m)
     return str
 end
 
+@with_kw mutable struct Snek
+    head :: Char = 'H'
+    tail :: Union{Char, Nothing} = nothing
+    elements :: Array{Char} = []
+end
+Base.show(io::IO, s::Snek) = print(io," ~<($(s.head))$(s.elements !== nothing ? s.elements : "")>")
+
 mutable struct State
     command :: String
     field :: Union{Matrix{Char}, Nothing}
     visited :: Union{Matrix{Char}, Nothing}
     covers :: Array{Char}
-    snake :: Union{Array{Char}, Nothing}
+    snake :: Union{Snek, Nothing}
 end
 
 Base.show(io::IO, s::State) = print(
@@ -112,20 +120,15 @@ function check_adjacent(m::Matrix{Char}, c1::Char, c2::Char) :: Bool
     return false
 end
 
-function move_pt2(direction::Char, value::Int, state::State, debug::Bool=false)
-    # dir = [up/down, left/right]
-    if direction == 'R'
-        dir = [0, 1]        
-    elseif direction == 'L'
-        dir = [0, -1]
-    elseif direction == 'U'
-        dir = [-1, 0]
-    elseif direction == 'D'
-        dir = [1, 0]
-    else
-        error("Unknown direction")
-    end
+function get_next_move(h, t)
+    # map the elements h and t to the direction they should move
+    # move the maximum change, if the maximum change is 0, don't move
+
+    return maximum(abs.(h .- t)) > 1 ? map(x -> sign(x), h .- t) : (0, 0)
 end
+
+# dir = [up/down, left/right]
+dir = Dict('R' => (1, 0), 'L' => (-1, 0), 'U' => (0, 1), 'D' => (0, -1))
 
 function init_state(input, state)
     # get the maximum size of the matrix
@@ -151,7 +154,8 @@ function init_state(input, state)
 end
 
 state_pt1 = State("Initial State", nothing, nothing, ['T'], nothing)
-state_pt2 = State("Initial State Part 2", nothing, nothing, reverse!(['1', '2', '3', '4', '5', '6', '7', '8', '9']), ['H'])
+snek = Snek('H', nothing, ['H'])
+state_pt2 = State("Initial State Part 2", nothing, nothing, reverse!(['1', '2', '3', '4', '5', '6', '7', '8', '9']), snek)
 
 # Part 1
 function part1(input)
@@ -183,34 +187,36 @@ function part1(input)
 end
 
 # Part 2
-function part2(input)
-    init_state(input, state_pt2)
-    debug = (size(state_pt2.field) < (20, 20) ? true : false)
-    # set the head as center of the matrix
-    center = ((size(state_pt2.field)[1]+1) ÷ 2 , (size(state_pt2.field)[2]+1) ÷ 2)
-    debug ? println("center: $center") : nothing
-    state_pt2.field[center...] = 'H'
-    debug ? println(state_pt2) : nothing
-    #debug ? println("iterating over the input to move the rope") : nothing
-    for i in ProgressBar(eachindex(input))
-        line = input[i]
-        direction, value = line[1], parse(Int, line[2:end])
-        state_pt2.command = "$direction $value"
-        move_pt2(direction, value, state_pt2, debug)
-        if state_pt2.field[center...] == '.'
-            state_pt2.field[center...] = 's'
+function part2(input, pt1=false)
+    snek_length = pt1 ? 2 : 10
+    knot_matrix = [(0,0) for _ in 1:snek_length]
+    # prepare a set of visited points
+    visited = Set()
+    # split all lines at the space
+    lines = split.(input, " ")
+    for line in lines
+        # get the value to move, move in steps of 1
+        for _ in 1:parse(Int, line[2])
+            # move the head +1 in the direction of the line (get the char)
+            knot_matrix[1] = knot_matrix[1] .+ dir[line[1][1]]
+            # move the rest of the snake
+            for knot in 2:snek_length
+                next_move = get_next_move(knot_matrix[knot-1], knot_matrix[knot])
+                knot_matrix[knot] = knot_matrix[knot] .+ next_move
+            end
+            push!(visited, knot_matrix[snek_length])
         end
     end
-    return nothing
+    return length(visited)
 end
 
 function main()
-    input = open(joinpath(@__DIR__, "input", "test_input.txt")) do f
+    input = open(joinpath(@__DIR__, "input", "input.txt")) do f
         readlines(f)
     end
-    #p1 = part1(input)
+    p1 = part2(input, true)
     p2 = part2(input)
-    #@show p1
+    @show p1
     @show p2
 end
 
