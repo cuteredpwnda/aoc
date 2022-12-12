@@ -45,7 +45,7 @@ function bfs(queue, path, grid, end_x, end_y)
     while length(queue) > 0
         x, y = dequeue!(queue)
         if (x, y) == (end_x, end_y)
-            break
+            return path
         end
         for (next_x, next_y) in [(x, y-1), (x+1, y), (x, y+1), (x-1, y)]
             # check if in bounds, not already visited
