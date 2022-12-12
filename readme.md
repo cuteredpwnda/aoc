@@ -50,13 +50,13 @@ Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). Th
 <h1 align="center">
   2021 - 37 ⭐
 </h1>
-<a href="None">
+<a href="2021/day_01/bin/day_01.dart">
   <img src="Media/2021/01.png" width="161px">
 </a>
-<a href="None">
+<a href="2021/day_02/bin/day_02.dart">
   <img src="Media/2021/02.png" width="161px">
 </a>
-<a href="None">
+<a href="2021/day_03/bin/day_03.dart">
   <img src="Media/2021/03.png" width="161px">
 </a>
 <a href="2021/day_04/day_04.py">
