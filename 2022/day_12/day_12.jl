@@ -1,4 +1,5 @@
 using DataStructures
+using TimerOutputs
 
 function print_matrix(m)
     str = ""
@@ -38,7 +39,7 @@ function populate_grid(grid, pt2=false)
             end
         end
     end
-    return queue, path, end_x, end_y
+    return queue, path, end_x, end_y 
 end
 
 function bfs(queue, path, grid, end_x, end_y)
@@ -70,7 +71,7 @@ end
 function part1(input)
     grid = init_grid(input)
     queue, path, end_x, end_y = populate_grid(grid)
-    path = bfs(queue, path, grid, end_x, end_y)    
+    path = bfs(queue, path, grid, end_x, end_y)
     return path[(end_x, end_y)]
 end
 
@@ -86,10 +87,13 @@ function main()
     input = open(joinpath(@__DIR__, "input", "input.txt")) do f
         readlines(f)
     end
-    p1 = part1(input)
-    p2 = part2(input)
+    to = TimerOutput()
+    
+    @timeit to "part1" p1 = part1(input)
+    @timeit to "part2" p2 = part2(input)
     @show p1
     @show p2
+    @show to
 end
 
 main()
