@@ -45,7 +45,6 @@ function bfs(queue, path, grid, end_x, end_y)
     while length(queue) > 0
         x, y = dequeue!(queue)
         if (x, y) == (end_x, end_y)
-            println("Found end at $x, $y")
             break
         end
         for (next_x, next_y) in [(x, y-1), (x+1, y), (x, y+1), (x-1, y)]
@@ -70,7 +69,6 @@ end
 # Part 1
 function part1(input)
     grid = init_grid(input)
-    println(size(grid))
     queue, path, end_x, end_y = populate_grid(grid)
     path = bfs(queue, path, grid, end_x, end_y)    
     return path[(end_x, end_y)]
