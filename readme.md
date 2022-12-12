@@ -2,19 +2,50 @@
 [Link](https://adventofcode.com/2022/)
 
 Solving the puzzles from the Advent of Code 2022 using Julia.
+Julia is kind of fun to play with as python programmer. Pretty similar syntax, but some weird stuff, like arrays starting at 1. But there are some nice notations to make some things easier - yet not more concise.
 
 # Advent of Code 2021
 [Link](https://adventofcode.com/2021/)
 Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). This is my first approach to this language.
 <!-- AOC TILES BEGIN -->
 <h1 align="center">
-  2022 - 4 ⭐
+  2022 - 24 ⭐
 </h1>
 <a href="2022/day_01/day_01.jl">
   <img src="Media/2022/01.png" width="161px">
 </a>
 <a href="2022/day_02/day_02.jl">
   <img src="Media/2022/02.png" width="161px">
+</a>
+<a href="2022/day_03/day_03.jl">
+  <img src="Media/2022/03.png" width="161px">
+</a>
+<a href="2022/day_04/day_04.jl">
+  <img src="Media/2022/04.png" width="161px">
+</a>
+<a href="2022/day_05/day_05.jl">
+  <img src="Media/2022/05.png" width="161px">
+</a>
+<a href="2022/day_06/day_06.jl">
+  <img src="Media/2022/06.png" width="161px">
+</a>
+<a href="2022/day_07/day_07.jl">
+  <img src="Media/2022/07.png" width="161px">
+</a>
+<a href="2022/day_08/day_08.jl">
+  <img src="Media/2022/08.png" width="161px">
+</a>
+<a href="2022/day_09/day_09.jl">
+  <img src="Media/2022/09.png" width="161px">
+</a>
+<a href="2022/day_10/day_10.jl">
+  <img src="Media/2022/10.png" width="161px">
+</a>
+<a href="2022/day_11/day_11.jl">
+  <img src="Media/2022/11.png" width="161px">
+</a>
+<a href="2022/day_12/day_12.jl">
+  <img src="Media/2022/12.png" width="161px">
 </a>
 <h1 align="center">
   2021 - 37 ⭐
