@@ -1,3 +1,5 @@
+using TimerOutputs
+
 # Part 1
 function part1(input)
     return nothing
@@ -12,10 +14,13 @@ function main()
     input = open(joinpath(@__DIR__, "input", "input.txt")) do f
         readlines(f)
     end
-    p1 = part1(input)
-    p2 = part2(input)
+    to = TimerOutput()
+
+    @timeit to "part1" p1 = part1(input)
+    @timeit to "part2" p2 = part2(input)
     @show p1
     @show p2
+    @show to
 end
 
 main()
