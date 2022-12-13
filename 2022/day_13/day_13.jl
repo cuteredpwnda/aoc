@@ -1,46 +1,70 @@
 using TimerOutputs
+using JSON
+
+function check_order(a, b)
+    # check type of a and b
+    if typeof(a) == typeof(b) == Int
+        # check which value is larger, if equal return nothing
+        return a < b ? true : a > b ? false : nothing
+    elseif isa(a, Array) && isa(b, Array)
+        for i in 1:max(length(a), length(b))
+            # check which value is larger, if equal do nothing
+            if i > length(a)
+                return true
+            elseif i > length(b)
+                return false
+            end
+            # recurse on the next values
+            if (c = check_order(a[i], b[i])) !== nothing
+                return c
+            end
+        end
+    # just one is an array and the other is not
+    else 
+        if isa(a, Int)
+            # put into a list and recurse
+            check_order([a], b)
+        else # b is an Int
+            check_order(a, [b])
+        end
+    end
+end
 
 # Part 1
 function part1(input)
-    for line in input
-        # parse the lists in line
-        parsed_line = []
-        split_line = split(line, ",")
-        for (i, char) in enumerate(split_line)
-            # check if char is an integer
-            if startswith(char, 
-                # go pack everything until the next "]" into a list
-                rest = split_line[i+1:end]
-                closing_bracket = [x for x in rest if endswith(x, "]")][1]
-                end_index = findfirst(isequal(closing_bracket), rest)
-                # trim the [ and ] from the string
-                start_char = split_line[i][2:end]
-                end_char = split_line[i+end_index][1:end-1]
-                println("start: $start_char, end: $end_char")
-                to_add = vcat([start_char], split_line[i+1:i+end_index-2], [end_char])
-                push!(parsed_line, to_add)
-                # make everything in the list integers
-            elseif startswith(char, r"\d") && !endswith(char, "]")
-                # pack to list
-                push!(parsed_line, [parse(Int, char) ])                
-            else
-                error("Kaputt, kaputt, kaputt! Got $char to read")
-            end
-        println(parsed_line)
-        end
+    amount = 0
+    parsed = []
+    for (i, pair) in enumerate(input)
+        # use Meta.parse the string into what it resembles as a julia expression
+        pair = [eval(Meta.parse(x)) for x in pair]        
+        push!(parsed, pair...)
+        amount += check_order(pair...) ? i : 0
     end
-
-    return nothing
+    return amount
 end
 
 # Part 2
 function part2(input)
-    return nothing
+    parsed = []
+    for pair in input
+        # use Meta.parse the string into what it resembles as a julia expression
+        pair = [eval(Meta.parse(x)) for x in pair]
+        push!(parsed, pair...)
+    end
+    divider_packages = [[[2]], [[6]]]
+    push!(parsed, divider_packages...)    
+    # sort the packages by check_order, funny julia syntax
+    sort!(parsed, lt=check_order)
+    # find all the indices of the divider packages (should only be 2, but just in case)
+    indices = findall(in(divider_packages), parsed)
+    println("Indices of divider packages $indices")
+    return prod(indices)
 end
 
 function main()
-    input = open(joinpath(@__DIR__, "input", "test_input.txt")) do f
-        readlines(f)
+    input = open(joinpath(@__DIR__, "input", "input.txt")) do f
+        split.(split(read(f, String), "\n\n"), "\n")
+        #split.(split(read(f, String), "\r\n\r\n"), "\r\n")
     end
     to = TimerOutput()
 
