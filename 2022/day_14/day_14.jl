@@ -125,16 +125,10 @@ function part1(input)
     min_x -= (1 + max_y)
     max_x += (1 + max_y)
     cave = init_cave(min_x, max_x, max_y, paths)
-    #println(print_matrix(cave))    
-    #println(size(cave))
     s_cart = findfirst(x -> x == '+', cave)
     sand_start = (s_cart[1], s_cart[2])
-    stop = false
     sand_pos = sand_start
-
-    #println("Starting pos: $sand_pos")
     drop_sand(sand_start, sand_pos, cave)
-    println(print_matrix(cave))
     c = counter(cave)
     return c['o']
 end
@@ -148,11 +142,10 @@ function part2(input)
     for line in split.(input," -> ")
         coords = [parse.(Int, split(x, ",")) for x in line]
         for (from, to) in zip(coords[2:end], coords)
-            from[1] == to[1] && union!(sand_coords, [(from[1], y) for y in from[2]:cmp(to[2], from[2]):to[2]])
-            from[2] == to[2] && union!(sand_coords, [(x, from[2]) for x in from[1]:cmp(to[1], from[1]):to[1]])
+            from[1] == to[1] ? union!(sand_coords, [(from[1], y) for y in from[2]:cmp(to[2], from[2]):to[2]]) : nothing
+            from[2] == to[2] ? union!(sand_coords, [(x, from[2]) for x in from[1]:cmp(to[1], from[1]):to[1]]) : nothing
         end
     end
-    println(sand_coords)
     depth = maximum(x->x[2], sand_coords) + 1
     rock_elements = length(sand_coords)
     while !((500, 0) in sand_coords)
