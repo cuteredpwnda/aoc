@@ -12,10 +12,11 @@ end
 
 # init cave with dynamic size
 function init_cave(min_x, max_x, max_y, paths, pt2=false)
+    max_y = pt2 ? max_y+3 : max_y+1
     range = max_x - min_x + 1
-    cave = Matrix{Char}(undef, max_y+1, range)
+    cave = Matrix{Char}(undef, max_y, range)
     # init with air
-    for i in 1:max_y+1
+    for i in 1:max_y
         for j in 1:range
             cave[i, j] = '.'
         end
@@ -41,12 +42,14 @@ function init_cave(min_x, max_x, max_y, paths, pt2=false)
             end
         end
     end
-    # draw bottom row for pt2
     if pt2
+        # add bottom
         for i in 1:range
-            cave[max_y+1, i] = '#'
+            cave[max_y, i] = '#'
         end
     end
+    sand_start = (1, 500-min_x+1)
+    cave[sand_start...] = '+'
     return cave
 end
 
@@ -56,42 +59,25 @@ function drop_sand(sand_start, sand_pos, cave) :: Bool
     look_right = (look_down[1], sand_pos[2]+1)
     cave[sand_pos...] = cave[sand_pos...] == '+' ? '+' : 'o'
 
-    # check if the sand flows out of the cave
-    precon_left = look_left[1] > size(cave)[1] || look_left[2] > size(cave)[2] || look_left[2] < 1
-    precon_right = look_right[1] > size(cave)[1] || look_right[2] > size(cave)[2] || look_right[2] < 1
     
-    precon_left ? println("Precon left for $sand_pos") : nothing
-    precon_right ? println("Precon right for $sand_pos") : nothing
+    # check if the sand flows out of the cave
+    precon_left = look_left[1] > size(cave)[1] || look_left[2] > size(cave)[2] || look_left[2] < 1    
+    precon_right = look_right[1] > size(cave)[1] || look_right[2] > size(cave)[2] || look_right[2] < 1
     if precon_left || precon_right
-        cave[sand_pos...] = '.'
+        cave[sand_pos...] = '.'            
+        println("Aborting: ran out of cave")
         return true
-    else 
-        precon_saturated = (cave[look_left...] == 'o' &&
-                        cave[look_right...] == 'o' &&
-                        cave[look_down...] == 'o' &&
-                        cave[sand_pos...] == 'o' &&
-                        sand_pos == sand_start)
-        precon_saturated ? println("Precon saturated for $sand_pos") : nothing        
-        if precon_saturated
-            # draw last sand grain
-            cave[sand_pos...] = 'o'
-            return true
-        end
-    end
-
-    precon_rock_bottom = look_down[1] >= size(cave)[1]
-    precon_rock_bottom ? println("Precon bottom for $sand_pos") : nothing
-    if precon_rock_bottom && !precon_left && !precon_right
-        cave[sand_pos...] = 'o'
-        return drop_sand(sand_start, sand_start, cave)
     end
 
     #check if sand hits sand or rock
-    if cave[look_down...] == '#' || cave[look_down...] == 'o'
+    down_populated = cave[look_down...] == '#' || cave[look_down...] == 'o'
+    left_populated = cave[look_left...] == '#' || cave[look_left...] == 'o'
+    right_populated = cave[look_right...] == '#' || cave[look_right...] == 'o'
+    if down_populated
         # check if left+down is sand or rock
-        if cave[look_left...] == '#' || cave[look_left...] == 'o'
+        if left_populated
             # check if right+down is sand or rock
-            if cave[look_right...] == '#' || cave[look_right...] == 'o'
+            if right_populated
                 # drop next grain of sand
                 return drop_sand(sand_start, sand_start, cave)
             else
@@ -112,6 +98,10 @@ function drop_sand(sand_start, sand_pos, cave) :: Bool
     return drop_sand(sand_start, sand_pos, cave)
 end
 
+function drop_sand_2() :: Bool
+    
+end
+
 function get_dimensions(input)
     paths = []
     max_x = 0
@@ -130,17 +120,20 @@ function get_dimensions(input)
 end
 # Part 1
 function part1(input)
-    max_x, min_x , max_y, paths = get_dimensions(input)    
+    max_x, min_x, max_y, paths = get_dimensions(input)
     #println("$max_x, $min_x, $max_y")
+    min_x -= (1 + max_y)
+    max_x += (1 + max_y)
     cave = init_cave(min_x, max_x, max_y, paths)
-    sand_start = (1, 500-min_x+1)
-    cave[sand_start...] = '+'
+    #println(print_matrix(cave))    
+    #println(size(cave))
+    s_cart = findfirst(x -> x == '+', cave)
+    sand_start = (s_cart[1], s_cart[2])
     stop = false
     sand_pos = sand_start
+
     #println("Starting pos: $sand_pos")
-    while stop == false
-        stop = drop_sand(sand_start, sand_pos, cave)
-    end
+    drop_sand(sand_start, sand_pos, cave)
     println(print_matrix(cave))
     c = counter(cave)
     return c['o']
@@ -148,31 +141,44 @@ end
 
 # Part 2
 function part2(input)
-    println("========== Part 2 ==========")  
-    max_x, min_x , max_y, paths = get_dimensions(input)
-    println("pt2: max x: $max_x, min x: $min_x, max y: $max_y")
-    
-    inf_max_y = max_y + 2
-    # make cave infinitely large in x direction, maximum x can be + inf_max_y
-    inf_min_x = min_x - inf_max_y
-    inf_max_x = max_x + inf_max_y
-    
-    println("max x: $inf_max_x, min x: $inf_min_x, max y: $inf_max_y")
-    cave = init_cave(inf_min_x, inf_max_x, inf_max_y, paths, true)
-    println(print_matrix(cave))
-    println(size(cave))
-
-    sand_start = (1, 500-inf_min_x+1)
-    cave[sand_start...] = '+'
-    
-    stop = false
-    sand_pos = sand_start
-    while stop == false
-        stop = drop_sand(sand_start, sand_pos, cave)
+    println("====== Part 2 ======")
+    # create a set
+    sand_coords = Set{Tuple{Int, Int}}()
+    # handle input and add to set
+    for line in split.(input," -> ")
+        coords = [parse.(Int, split(x, ",")) for x in line]
+        for (from, to) in zip(coords[2:end], coords)
+            from[1] == to[1] && union!(sand_coords, [(from[1], y) for y in from[2]:cmp(to[2], from[2]):to[2]])
+            from[2] == to[2] && union!(sand_coords, [(x, from[2]) for x in from[1]:cmp(to[1], from[1]):to[1]])
+        end
     end
-    println(print_matrix(cave))
-    c = counter(cave)
-    return c['o']
+    println(sand_coords)
+    depth = maximum(x->x[2], sand_coords) + 1
+    rock_elements = length(sand_coords)
+    while !((500, 0) in sand_coords)
+        start = (500, 0)
+        while true
+            if start[2] == depth
+                # is at start position
+                push!(sand_coords, start)
+                break
+            elseif !(start.+(0, 1) in sand_coords)
+                # check down
+                start = start.+(0, 1)
+            elseif !(start.+(-1, 1) in sand_coords)
+                # check left
+                start = start.+(-1, 1)
+            elseif !(start.+(1, 1) in sand_coords)
+                # check right
+                start = start.+(1, 1)
+            else
+                # if final resting place
+                push!(sand_coords, start)
+                break
+            end
+        end
+    end
+    return length(sand_coords)-rock_elements
 end
 
 function main()
