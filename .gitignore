@@ -2,3 +2,5 @@
 .env
 AoCTiles
 tmp
+
+.vscode
