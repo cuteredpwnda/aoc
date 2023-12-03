@@ -4,3 +4,6 @@ AoCTiles
 tmp
 
 .vscode
+
+# rust specific
+/target
