@@ -6,4 +6,4 @@ tmp
 .vscode
 
 # rust specific
-/target
+target
