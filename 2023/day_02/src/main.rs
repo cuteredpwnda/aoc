@@ -66,6 +66,48 @@ fn check_if_game_is_possible(game:&HashMap<&str, u32>, max_values:&HashMap<&str,
     is_possible
 }
 
+fn part_2(input: &str) -> u32 {
+    let mut games: HashMap<u32, HashMap<&str, u32>> = HashMap::new();
+    
+    for line in input.lines() {
+        let game_no = line.split(": ").next().unwrap().split_whitespace().last().unwrap().parse::<u32>().unwrap();
+        let records_str = line.split(": ").last().unwrap();
+        let sets: Vec<&str> = records_str.split("; ").collect();
+        // create this games hashmap
+        let mut game:HashMap<&str, u32> = [
+            ("red", 0),
+            ("green", 0),
+            ("blue", 0)].iter().cloned().collect();
+        for set in sets.iter() {
+            //split up the set into the different colors pulled
+            let set = set.split(", ");
+            for item in set {
+                // get the number of bags pulled
+                let num_bags = item.split_whitespace().next().unwrap().parse::<u32>().unwrap();
+                // get the color of the bag pulled
+                let color = item.split_whitespace().last().unwrap();
+                // if this sets num_bags is greater than the current num_bags for this color, update the num_bags for this color
+                let current_num_bags = *game.get(color).unwrap();
+                if num_bags > current_num_bags {
+                    game.insert(color, num_bags);
+                }
+            }
+        }
+        games.insert(game_no, game);
+    }
+
+    // when a game is possible, multiply the colors num_bags together as "power" and add to the total power
+    let mut total_power = 0;
+    for (_, game) in games.iter() {
+        let mut power = 1;
+        for (_, num_bags) in game.iter() {
+            power *= num_bags;
+        }
+        total_power += power;
+    }
+    
+    total_power
+}
 
 fn main() {
     // get parent directory of the current file
@@ -82,4 +124,9 @@ fn main() {
     let input_file = format!("{}/input.txt", input_folder);
     let input = fs::read_to_string(input_file).expect("Should have been able to read the file");
     println!("Solution for real input: {}",part_1(&input));
+
+    // read the test input
+    println!("Solution for test part 2: {}",part_2(&test_input));
+    // read the test input
+    println!("Solution for part 2: {}",part_2(&input));
 }
