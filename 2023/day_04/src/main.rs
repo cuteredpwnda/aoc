@@ -1,6 +1,6 @@
 use std::env;
 use std::fs;
-
+use std::time::{Instant};
 
 fn part_1(input: &str) -> u32 {
     // iterate over the lines and check the count of the winning numbers in my numbers
@@ -83,18 +83,24 @@ fn main() {
     let input_folder = format!("{}/input", current_dir.display());
     
     // read the test input
-    let test_input_file = format!("{}/test_1.txt", input_folder);
-    let test_input = fs::read_to_string(test_input_file).expect("Should have been able to read the file");
+    //let test_input_file = format!("{}/test_1.txt", input_folder);
+    //let test_input = fs::read_to_string(test_input_file).expect("Should have been able to read the file");
     
-    println!("Solution for test: {}",part_1(&test_input));
+    //println!("Solution for test: {}",part_1(&test_input));
 
     // read the input
+    let start = Instant::now();
     let input_file = format!("{}/input.txt", input_folder);
     let input = fs::read_to_string(input_file).expect("Should have been able to read the file");
+    println!("Reading took: {:?}", start.elapsed());
+    let start_p1 = Instant::now();
     println!("Solution for part 1: {}",part_1(&input));
+    println!("Solving pt 1 took: {:?}", start_p1.elapsed());
 
     // read the pt 2 test input
-    println!("Solution for test 2: {}",part_2(&test_input));
+    //println!("Solution for test 2: {}",part_2(&test_input));
     // read the pt 2 input
-    println!("Solution for test 2: {}",part_2(&input));
+    let start_p2 = Instant::now();
+    println!("Solution for test 2: {}",part_2(&input));    
+    println!("Solving pt 2 took: {:?}", start_p2.elapsed());
 }
