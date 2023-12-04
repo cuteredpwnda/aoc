@@ -3,86 +3,20 @@ use std::fs;
 
 
 fn part_1(input: &str) -> u32 {
-    let mut result = String::new();
-    // create a vector of all the lines with tuples (card number, winning numbers, my numbers)
-    let lines = input.split("\n").map(|line| {
-        let mut line_split = line.split(": ");
-        let card_number = line_split.next().expect("Should have been able to get the card number");
-        let numbers = line_split.next().expect("Should have been able to get the numbers");
-        let mut numbers_split = numbers.split(" | ");
-        let winning_numbers_raw = numbers_split.next().expect("Should have been able to get the winning numbers");
-        let my_numbers_raw = numbers_split.next().expect("Should have been able to get my numbers");
-        let winning_numbers_str = winning_numbers_raw.split_whitespace().collect::<Vec<&str>>();
-        let my_numbers_str = my_numbers_raw.split_whitespace().collect::<Vec<&str>>();
-        let winning_numbers = winning_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
-        let my_numbers = my_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
-        (card_number, winning_numbers, my_numbers)
-    }).collect::<Vec<(&str, Vec<u32>, Vec<u32>)>>();
-    
     // iterate over the lines and check the count of the winning numbers in my numbers
-    let mut scratchbook = Vec::<(String, u32)>::new();
-    for (card_number, winning_numbers, my_numbers) in lines {
-        let mut count = 0;
-        for number in winning_numbers {
-            // check if the number is in my numbers
-            if my_numbers.contains(&number) {
-                count += 1;
-            }            
-        }
-        result.push_str(&format!("{}: {}\n", card_number, count));
-        let mut points = 0;
-        if count > 0 {
-            points = u32::pow(2, count-1);
-        }
-        
-        scratchbook.push((card_number.to_string(), points));
-    }
+    let mut scratchbook = parse_input(&input);
     // add the points together
     let mut total_points = 0;
-    for (_, points) in scratchbook {
+    for (_, _, points, _) in scratchbook {
         total_points += points;
     }
     total_points
 }
 
 fn part_2(input: &str) -> u32{
-    let mut result = String::new();
-    // create a vector of all the lines with tuples (card number, winning numbers, my numbers)
-    let lines = input.split("\n").map(|line| {
-        let mut line_split = line.split(": ");
-        let card_number = line_split.next().expect("Should have been able to get the card number");
-        let numbers = line_split.next().expect("Should have been able to get the numbers");
-        let mut numbers_split = numbers.split(" | ");
-        let winning_numbers_raw = numbers_split.next().expect("Should have been able to get the winning numbers");
-        let my_numbers_raw = numbers_split.next().expect("Should have been able to get my numbers");
-        let winning_numbers_str = winning_numbers_raw.split_whitespace().collect::<Vec<&str>>();
-        let my_numbers_str = my_numbers_raw.split_whitespace().collect::<Vec<&str>>();
-        let winning_numbers = winning_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
-        let my_numbers = my_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
-        (card_number, winning_numbers, my_numbers)
-    }).collect::<Vec<(&str, Vec<u32>, Vec<u32>)>>();
-    
-    //println!("lines: {:?}", lines);
+    let mut scratchbook = parse_input(&input);
 
-    // iterate over the lines and check the count of the winning numbers in my numbers
-    let mut scratchbook = Vec::<(String, u32, u32, u32)>::new();
-    for (card_number, winning_numbers, my_numbers) in lines {
-        let mut count = 0;
-        for number in winning_numbers {
-            // check if the number is in my numbers
-            if my_numbers.contains(&number) {
-                count += 1;
-            }            
-        }
-        result.push_str(&format!("{}: {}\n", card_number, count));
-        let mut points = 0;
-        if count > 0 {
-            points = u32::pow(2, count-1);
-        }
-        
-        scratchbook.push((card_number.to_string(), count, points, 1));
-    }
-
+    // update the amounts of scratchcards in the scratchbook
     for i in 0..scratchbook.len() {
         let count = scratchbook[i].1;
         let curr_amount = scratchbook[i].3;
@@ -102,6 +36,44 @@ fn part_2(input: &str) -> u32{
         total_points += amount;
     }
     total_points
+}
+
+fn parse_input(input: &str) -> Vec::<(String, u32, u32, u32)>{
+    let mut result = String::new();
+    // create a vector of all the lines with tuples (card number, winning numbers, my numbers)
+    let lines = input.split("\n").map(|line| {
+        let mut line_split = line.split(": ");
+        let card_number = line_split.next().expect("Should have been able to get the card number");
+        let numbers = line_split.next().expect("Should have been able to get the numbers");
+        let mut numbers_split = numbers.split(" | ");
+        let winning_numbers_raw = numbers_split.next().expect("Should have been able to get the winning numbers");
+        let my_numbers_raw = numbers_split.next().expect("Should have been able to get my numbers");
+        let winning_numbers_str = winning_numbers_raw.split_whitespace().collect::<Vec<&str>>();
+        let my_numbers_str = my_numbers_raw.split_whitespace().collect::<Vec<&str>>();
+        let winning_numbers = winning_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
+        let my_numbers = my_numbers_str.iter().map(|s| s.parse().expect("parse error")).collect::<Vec<u32>>();
+        (card_number, winning_numbers, my_numbers)
+    }).collect::<Vec<(&str, Vec<u32>, Vec<u32>)>>();
+
+    // iterate over the lines and check the count of the winning numbers in my numbers
+    let mut scratchbook = Vec::<(String, u32, u32, u32)>::new();
+    for (card_number, winning_numbers, my_numbers) in lines {
+        let mut count = 0;
+        for number in winning_numbers {
+            // check if the number is in my numbers
+            if my_numbers.contains(&number) {
+                count += 1;
+            }            
+        }
+        result.push_str(&format!("{}: {}\n", card_number, count));
+        let mut points = 0;
+        if count > 0 {
+            points = u32::pow(2, count-1);
+        }
+        
+        scratchbook.push((card_number.to_string(), count, points, 1));
+    }
+    scratchbook
 }
 
 fn main() {
