@@ -4,7 +4,7 @@ use std::fs;
 
 fn part_1(input: &str) -> u32 {
     // iterate over the lines and check the count of the winning numbers in my numbers
-    let mut scratchbook = parse_input(&input);
+    let scratchbook = parse_input(&input);
     // add the points together
     let mut total_points = 0;
     for (_, _, points, _) in scratchbook {
