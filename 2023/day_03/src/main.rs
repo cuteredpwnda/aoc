@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use array2d::Array2D;
+use std::collections::HashMap;
 
 fn parse_to_matrix(input:&str) -> Array2D<char>{
     let rows = input.split("\n").map(|line| {
@@ -11,72 +12,50 @@ fn parse_to_matrix(input:&str) -> Array2D<char>{
 }
 
 fn check_neighbors(matrix:&Array2D<char>){
-    
-    // get indices of all numbers, iterate full matrix and check if the current index is a number
-    let mut part_number_indices = Vec::<(i32, i32)>::new();
-    for (j, columns_iter) in matrix.columns_iter().enumerate() {
-        for (i, value) in columns_iter.enumerate() {
-            if value.is_digit(10) {
-                part_number_indices.push((i as i32, j as i32));
-            }
-        }
-    }
-    // sort the indices by the first value
-    part_number_indices.sort_by(|a, b| a.0.cmp(&b.0));
-
-    // iterate over the indices and check the neighbors of each index
-    let mut candidates_indices = Vec::<(i32, i32)>::new();
-    for (i, j) in part_number_indices {
-        let mut neighbors = Vec::<char>::new();
-        // check the neighbors
-        for x in i-1..i+2 {
-            for y in j-1..j+2 {
-                if x < 0 || y < 0 {
-                    continue;
-                }
-                if x >= matrix.num_columns() as i32 || y >= matrix.num_rows() as i32 {
-                    continue;
-                }
-                if x == i && y == j {
-                    continue;
-                }
-                if let Some(value) = matrix.get(x as usize, y as usize) {
-                    neighbors.push(*value);
-                }
-            }
-        }
-        // remove all '.' from the neighbors
-        neighbors.retain(|&x| x != '.');
-        // keep only those with neighbors that are not numbers
-        neighbors.retain(|&x| !x.is_digit(10));
-        if neighbors.len() >= 1 {
-            println!("Found a candidate at: ({}, {})", i, j);
-            candidates_indices.push((i, j));
-        }
-    }
-
-    // combine part numbers by combining the digits that are next to each other row by row
-    let mut part_numbers = Vec::<String>::new();
-    for (index, columns_iter) in matrix.columns_iter().enumerate(){
-        let mut part_number_vec = Vec::<String>::new();
-        for (i, value) in columns_iter.enumerate() {
-            if value.is_digit(10) {                
-                part_number_vec.push(*value);
-                // check the neighbors
-                for x in i+1..matrix.num_columns() {
-                    if let Some(value) = matrix.get(x, index) {
-                        if value.is_digit(10) {
-                            part_number_vec.push(*value);
-                        } else {
-                            break;
+   // create a hashmap with the part numbers as keys and the neigbors as list of values
+    let mut neighbors:HashMap<u32,Vec<char>> = HashMap::new();
+    // extract the part numbers from the matrix
+    for row in 0..matrix.num_rows() as i32 {
+        for col in 0..matrix.num_columns() as i32 {
+            let curr_elem = matrix[(row as usize, col as usize)];
+            let mut part_number_vec:Vec<u32> = Vec::new();
+            // get all the neighbors into a vector
+            let mut neighbor_list:Vec<char> = Vec::new();
+            if curr_elem.is_digit(10) {
+                println!("curr_elem: {}", curr_elem);
+                let curr_digit = curr_elem.to_digit(10).unwrap();
+                part_number_vec.push(curr_digit);
+                // add the neighbors to the neighbor_list
+                for i in -1..=1 as i32{
+                    for j in -1..=1 as i32{
+                        if i == 0 && j == 0 ||
+                            row+i >= matrix.num_rows() as i32 ||
+                            col+j >= matrix.num_columns() as i32 ||
+                            row+i < 0 ||
+                            col+j < 0 {
+                            continue;
+                        }
+                        else {
+                            let neighbor_index = ((row+i) as usize, (col+j) as usize);
+                            let neighbor = matrix[neighbor_index];                        
+                            if !neighbor.is_digit(10) && neighbor != '.' {
+                            neighbor_list.push(neighbor);
+                            }
                         }
                     }
                 }
-                part_numbers.push(part_number);
+            } else { // stop here and combine the part numbers into a u32
+                println!("found stop character: {}\n combining current part_number {:?}", curr_elem, part_number_vec);
+                let mut part_number:u32 = 0;
+                for digit in &part_number_vec {
+                    part_number = part_number * 10 + digit;
+                }
+                neighbors.insert(part_number, neighbor_list);
+                // clear the part_number_vec
+                part_number_vec = Vec::new();
             }
         }
     }
-    println!("Part numbers: {:?}", part_numbers);
 }
 
 fn part_1(input:&str) -> u32 {
