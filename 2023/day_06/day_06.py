@@ -45,10 +45,11 @@ def calc_races(input, p=1):
         
 def main():
     input_file = glob(os.path.join(os.path.dirname(__file__), "input", "input.txt"))[0]
+    #pt 1
     input = read_input(input_file)
     calc_races(input)
 
-    # pt 2 test
+    # pt 2
     input = read_input_pt2(input_file)
     calc_races(input, p=2)
 
