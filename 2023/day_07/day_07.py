@@ -14,7 +14,7 @@ def timing(f):
         return result
     return wrap
 
-CARD_STRENGHT_DICT = {
+CARD_STRENGTH_DICT = {
     "2": 2,
     "3": 3,
     "4": 4,
@@ -65,10 +65,10 @@ def score_hand(hand:str, pt2=False) -> tuple:
             
     if pt2:
         # set jokers value to 1
-        CARD_STRENGHT_DICT["J"] = 1
+        CARD_STRENGTH_DICT["J"] = 1
     
     # sort the cards by value
-    card_counts = sorted(card_count.items(), key=lambda x: CARD_STRENGHT_DICT[x[0]], reverse=True)
+    card_counts = sorted(card_count.items(), key=lambda x: CARD_STRENGTH_DICT[x[0]], reverse=True)
 
     if pt2:
         # check if there are jokers in the hand
@@ -172,9 +172,9 @@ def score_hand(hand:str, pt2=False) -> tuple:
 
 def compare_hands(hand_1:tuple, hand_2:tuple) -> str:
     for card_1, card_2 in zip(hand_1[0], hand_2[0]):
-        if CARD_STRENGHT_DICT[card_1[0]] > CARD_STRENGHT_DICT[card_2[0]]:
+        if CARD_STRENGTH_DICT[card_1[0]] > CARD_STRENGTH_DICT[card_2[0]]:
             return 1
-        elif CARD_STRENGHT_DICT[card_1[0]] < CARD_STRENGHT_DICT[card_2[0]]:
+        elif CARD_STRENGTH_DICT[card_1[0]] < CARD_STRENGTH_DICT[card_2[0]]:
             return -1
         else:
             continue
