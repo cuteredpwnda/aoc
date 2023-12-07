@@ -69,13 +69,65 @@ def score_hand(hand:str, pt2=False) -> tuple:
     
     # sort the cards by value
     card_counts = sorted(card_count.items(), key=lambda x: CARD_STRENGHT_DICT[x[0]], reverse=True)
+
     if pt2:
+        # check if there are jokers in the hand
+        jokers = card_count.get("J", 0)
+        if jokers > 0:
+            highest_card_count_list = sorted(card_counts, key=lambda x: x[1], reverse=True)
+            if highest_card_count_list[0][0] == "J":
+                highest_card_count_list = highest_card_count_list[1:] +  highest_card_count_list[:1]
+            
+            # if there card_counts
+            if jokers == 5:
+                card_count[highest_card_count_list[0][0]] += jokers
+                card_count["J"] = 0
+            elif jokers + highest_card_count_list[0][1] > 5:
+                # split the jokers over the highest two amounts of cards
+                i = 0
+                while jokers > 0:
+                    highest_card_count_list = sorted(card_counts, key=lambda x: x[1], reverse=True)
+                    curr = highest_card_count_list[i][1]
+                    jokers_to_give = 5-curr
+                    card_count[highest_card_count_list[i][0]] += jokers_to_give
+                    card_count["J"] -= jokers_to_give
+                    jokers -= jokers_to_give
+                    i += 1                   
+            elif jokers + highest_card_count_list[0][1] == 5:
+                print("constructed a 5 of a kind")
+                card_count[highest_card_count_list[0][0]] += jokers
+                card_count["J"] = 0
+            elif jokers + highest_card_count_list[0][1] == 4:
+                print("constructed a 4 of a kind")
+                card_count[highest_card_count_list[0][0]] += jokers
+                card_count["J"] = 0            
+            elif jokers + highest_card_count_list[0][1] == 3 and jokers + highest_card_count_list[0][1] == 2:
+                print("constructed a 3 - 2 full house")
+                card_count[highest_card_count_list[0][1]] = 3
+                card_count[highest_card_count_list[1][1]] = 2
+                card_count["J"] = 0
+            elif jokers + highest_card_count_list[0][1] == 2 and jokers + highest_card_count_list[0][1] == 3:
+                print("constructed a 2 - 3 full house")
+                card_count[highest_card_count_list[0][1]] = 2
+                card_count[highest_card_count_list[1][1]] = 3
+                card_count["J"] = 0
+            elif jokers + highest_card_count_list[0][1] == 3:
+                print("constructed a 3 of a kind")
+                card_count[highest_card_count_list[0][0]] += jokers
+                card_count["J"] = 0
+            elif jokers + highest_card_count_list[0][1] == 2:
+                print("constructed a pair")
+                card_count[highest_card_count_list[0][0]] += jokers
+                card_count["J"] = 0
+        
         # to the highest amount of cards, add the jokers
+        """
         highest_card_count = sorted(card_counts, key=lambda x: x[1], reverse=True)[0]
         jokers = card_count.get("J", 0)
         card_count[highest_card_count[0]] += jokers
         card_count["J"] = 0
         card_counts = sorted(card_count.items(), key=lambda x: CARD_STRENGHT_DICT[x[0]], reverse=True)
+        """
     
     # check for pairs, three of a kind, four of a kind, five of a kind
     pairs = []
@@ -128,17 +180,6 @@ def compare_hands(hand_1:tuple, hand_2:tuple) -> str:
             continue
     return 0
 
-def compare_hands_pt2(hand_1:tuple, hand_2:tuple) -> str:
-    CARD_STRENGHT_DICT["J"] = 1
-    for card_1, card_2 in zip(hand_1[0], hand_2[0]):
-        if CARD_STRENGHT_DICT[card_1[0]] > CARD_STRENGHT_DICT[card_2[0]]:
-            return 1
-        elif CARD_STRENGHT_DICT[card_1[0]] < CARD_STRENGHT_DICT[card_2[0]]:
-            return -1
-        else:
-            continue
-    return 0
-
 @timing
 def pt(input, pt2=False):
     score_list = {x: [] for x in range(8)}
@@ -153,10 +194,7 @@ def pt(input, pt2=False):
         if len(hands) == 1:
             sorted_hand_list.append(hands[0])
         else:
-            if pt2:
-                sorted_hands = sorted(hands, key=cmp_to_key(compare_hands_pt2))
-            else:
-                sorted_hands = sorted(hands, key=cmp_to_key(compare_hands))
+            sorted_hands = sorted(hands, key=cmp_to_key(compare_hands))
             sorted_hand_list.extend(sorted_hands)
            
     rank = 1
