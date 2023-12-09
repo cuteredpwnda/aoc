@@ -9,7 +9,7 @@ def timing(f):
         ts = time()
         result = f(*args, **kw)
         te = time()
-        print(f'{f.__name__} took: {(te-ts):.4f} sec')
+        print(f'{f.__name__} took: {((te-ts))*1000:.4f} ms')
         return result
     return wrap
 
