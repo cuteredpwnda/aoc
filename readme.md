@@ -9,7 +9,37 @@ Julia is kind of fun to play with as python programmer. Pretty similar syntax, b
 Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). This is my first approach to this language.
 <!-- AOC TILES BEGIN -->
 <h1 align="center">
-  2022 - 24 ⭐
+  2023 - 13 ⭐
+</h1>
+<a href="2023/day_01/src/main.rs">
+  <img src="Media/2023/01.png" width="161px">
+</a>
+<a href="2023/day_02/src/main.rs">
+  <img src="Media/2023/02.png" width="161px">
+</a>
+<a href="2023/day_03/src/main.rs">
+  <img src="Media/2023/03.png" width="161px">
+</a>
+<a href="2023/day_04/benches/my_benchmark.rs">
+  <img src="Media/2023/04.png" width="161px">
+</a>
+<a href="2023/day_05/src/main.rs">
+  <img src="Media/2023/05.png" width="161px">
+</a>
+<a href="2023/day_06/day_06.py">
+  <img src="Media/2023/06.png" width="161px">
+</a>
+<a href="2023/day_07/day_07.py">
+  <img src="Media/2023/07.png" width="161px">
+</a>
+<a href="2023/day_08/day_08.py">
+  <img src="Media/2023/08.png" width="161px">
+</a>
+<a href="2023/day_09/day_09.py">
+  <img src="Media/2023/09.png" width="161px">
+</a>
+<h1 align="center">
+  2022 - 30 ⭐
 </h1>
 <a href="2022/day_01/day_01.jl">
   <img src="Media/2022/01.png" width="161px">
@@ -46,6 +76,18 @@ Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). Th
 </a>
 <a href="2022/day_12/day_12.jl">
   <img src="Media/2022/12.png" width="161px">
+</a>
+<a href="2022/day_13/day_13.jl">
+  <img src="Media/2022/13.png" width="161px">
+</a>
+<a href="2022/day_14/day_14.jl">
+  <img src="Media/2022/14.png" width="161px">
+</a>
+<a href="2022/day_15/day_15.jl">
+  <img src="Media/2022/15.png" width="161px">
+</a>
+<a href="2022/day_16/day_16.jl">
+  <img src="Media/2022/16.png" width="161px">
 </a>
 <h1 align="center">
   2021 - 37 ⭐
