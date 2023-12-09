@@ -1,12 +1,3 @@
-# Advent of Code 2022
-[Link](https://adventofcode.com/2022/)
-
-Solving the puzzles from the Advent of Code 2022 using Julia.
-Julia is kind of fun to play with as python programmer. Pretty similar syntax, but some weird stuff, like arrays starting at 1. But there are some nice notations to make some things easier - yet not more concise.
-
-# Advent of Code 2021
-[Link](https://adventofcode.com/2021/)
-Trying to solve the Advent of Code Challenges with [Dart](https://dart.dev/). This is my first approach to this language.
 <!-- AOC TILES BEGIN -->
 <h1 align="center">
   2023 - 13 ⭐
